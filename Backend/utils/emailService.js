@@ -1,25 +1,25 @@
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
-  host:process.env.EMAIL_HOST,
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS // Use your 16-digit app password here
-  }
+    host: process.env.EMAIL_HOST,
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS, // Use your 16-digit app password here
+    },
 });
 
 exports.sendBloodRequest = async (hospitalEmail, requestDetails) => {
-  try {
-    const mailOptions = {
-      from: {
-        name: "BloodBond Emergency",
-        address: process.env.EMAIL_USER
-      },
-      to: hospitalEmail,
-      subject: `URGENT: Blood Request - ${requestDetails.bloodGroup} Required`,
-      html: `
+    try {
+        const mailOptions = {
+            from: {
+                name: "BloodBond Emergency",
+                address: process.env.EMAIL_USER,
+            },
+            to: hospitalEmail,
+            subject: `URGENT: Blood Request - ${requestDetails.bloodGroup} Required`,
+            html: `
         <!DOCTYPE html>
         <html>
         <head>
@@ -69,9 +69,15 @@ exports.sendBloodRequest = async (hospitalEmail, requestDetails) => {
             <div class="content">
               <p>A new emergency blood request has been received:</p>
               <ul>
-                <li><strong>Patient Name:</strong> ${requestDetails.patientName}</li>
-                <li><strong>Blood Group Required:</strong> ${requestDetails.bloodGroup}</li>
-                <li><strong>Units Required:</strong> ${requestDetails.unitsRequired}</li>
+                <li><strong>Patient Name:</strong> ${
+                    requestDetails.patientName
+                }</li>
+                <li><strong>Blood Group Required:</strong> ${
+                    requestDetails.bloodGroup
+                }</li>
+                <li><strong>Units Required:</strong> ${
+                    requestDetails.unitsRequired
+                }</li>
                 <li><strong>Request Date:</strong> ${new Date().toLocaleDateString()}</li>
               </ul>
               <p class="urgent">URGENT: Please respond within 30 minutes</p>
@@ -90,21 +96,18 @@ exports.sendBloodRequest = async (hospitalEmail, requestDetails) => {
         </body>
         </html>
       `,
-      headers: {
-        'X-Priority': '1',
-        'X-MSMail-Priority': 'High',
-        'Importance': 'high'
-      }
-    };
+            headers: {
+                "X-Priority": "1",
+                "X-MSMail-Priority": "High",
+                Importance: "high",
+            },
+        };
 
-    const result = await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully:", result);
-    return { success: true, messageId: result.messageId };
-
-  } catch (error) {
-    console.error("Error sending email:", error);
-    throw new Error(`Failed to send email: ${error.message}`);
-  }
+        const result = await transporter.sendMail(mailOptions);
+        console.log("Email sent successfully:", result);
+        return { success: true, messageId: result.messageId };
+    } catch (error) {
+        console.error("Error sending email:", error);
+        throw new Error(`Failed to send email: ${error.message}`);
+    }
 };
-
-
