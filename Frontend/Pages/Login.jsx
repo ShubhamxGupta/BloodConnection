@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, Lock } from "lucide-react";
+import { useState } from "react";
 
 const schema = yup.object().shape({
     email: yup.string().email("Invalid email").required("Email is required"),
@@ -17,6 +18,8 @@ const schema = yup.object().shape({
 const Login = () => {
     const [userType, setUserType] = useState("user");
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+
     const navigate = useNavigate();
     const {
         register,
@@ -51,7 +54,6 @@ const Login = () => {
             localStorage.setItem("token", result.token);
             localStorage.setItem("userType", userType);
             localStorage.setItem("userName", result.userName); // Store userName
-
             // Redirect based on user type
             if (userType === "user") {
                 navigate("/user-dashboard");
@@ -60,8 +62,9 @@ const Login = () => {
             }
         } catch (err) {
             console.error("Error:", err.message);
-            alert(err.message);
+            toast.error(err.message || "Something went wrong");
         } finally {
+            toast.success("Login successful");
             setIsLoading(false);
         }
     };
@@ -110,9 +113,13 @@ const Login = () => {
                             Email
                         </label>
                         <input
+                            disabled={isLoading}
+                            autoComplete="email"
                             type="email"
                             {...register("email")}
-                            className="w-full p-2 mt-1 rounded-lg bg-[#1b3a4b] text-white focus:outline-none"
+                            className={`w-full p-2 mt-1 rounded-lg bg-[#1b3a4b] text-white focus:outline-none ${
+                                isLoading ? "opacity-70 cursor-not-allowed" : ""
+                            }`}
                             placeholder="example@mail.com"
                         />
                         {errors.email && (
@@ -129,11 +136,22 @@ const Login = () => {
                             Password
                         </label>
                         <input
-                            type="password"
+                            type={showPassword ? "text" : "password"}
+                            autoComplete="current-password"
+                            disabled={isLoading}
                             {...register("password")}
-                            className="w-full p-2 mt-1 rounded-lg bg-[#1b3a4b] text-white focus:outline-none"
+                            className={`w-full p-2 mt-1 rounded-lg bg-[#1b3a4b] text-white focus:outline-none ${
+                                isLoading ? "opacity-70 cursor-not-allowed" : ""
+                            }`}
                             placeholder="••••••••"
                         />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            className="absolute right-3 top-2 text-sm text-[#28bca9]"
+                        >
+                            {showPassword ? "Hide" : "Show"}
+                        </button>
                         {errors.password && (
                             <p className="text-red-500 text-sm">
                                 {errors.password.message}
