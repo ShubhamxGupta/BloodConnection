@@ -594,7 +594,7 @@ Please ensure:
                         <div className="flex items-center space-x-2">
                             <Bot className="text-white" size={24} />
                             <h2 className="text-lg font-semibold text-white">
-                                BloodConnection Assistant
+                                BloodBond Assistant
                             </h2>
                         </div>
                         <X

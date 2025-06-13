@@ -151,8 +151,8 @@ const UserDashboard = () => {
                                 <span className="font-semibold">
                                     {user?.location?.city &&
                                     user?.location?.state
-                                        ? ` ${user.location.city}, ${user.location.state}`
-                                        : " Unknown"}
+                                        ? `${user.location.city}, ${user.location.state}`
+                                        : "Unknown"}
                                 </span>
                             </p>
                         </div>
