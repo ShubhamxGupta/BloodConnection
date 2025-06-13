@@ -30,6 +30,7 @@ const registerUser = async (req, res) => {
         await user.save();
         res.status(201).json({ message: "User registered successfully" });
     } catch (err) {
+        console.error("Error in registerUser:", err); // Log registration error
         res.status(500).json({ message: err.message });
     }
 };
@@ -59,6 +60,7 @@ const registerHospital = async (req, res) => {
         await hospital.save();
         res.status(201).json({ message: "Hospital registered successfully" });
     } catch (err) {
+        console.error("Error in registerHospital:", err); // Log registration error
         res.status(500).json({ message: err.message });
     }
 };

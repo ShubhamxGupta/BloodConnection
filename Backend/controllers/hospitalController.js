@@ -9,6 +9,7 @@ const getHospitalProfile = async (req, res) => {
         );
         res.json(hospital);
     } catch (err) {
+        console.error("Error in getHospitalProfile:", err); // Add this line to log the error
         res.status(500).json({ message: err.message });
     }
 };
