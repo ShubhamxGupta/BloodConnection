@@ -19,27 +19,18 @@ const Navbar = () => {
                 </Link>
 
                 {/* Desktop Menu */}
-                <div className="hidden md:flex space-x-8">
-                    <NavItem
-                        to="/"
-                        label="Home"
-                        handleClick={() => setIsOpen(false)}
-                    />
-                    <NavItem
-                        to="/about"
-                        label="About"
-                        handleClick={() => setIsOpen(false)}
-                    />
-                    <NavItem
-                        to="/contact"
-                        label="Contact"
-                        handleClick={() => setIsOpen(false)}
-                    />
-                    <NavItem
-                        to="/events"
-                        label="Events"
-                        handleClick={() => setIsOpen(false)}
-                    />
+                <div className="hidden md:flex items-center space-x-8">
+                    <NavItem to="/" label="Home" handleClick={() => setIsOpen(false)} />
+                    <NavItem to="/about" label="About" handleClick={() => setIsOpen(false)} />
+                    <NavItem to="/contact" label="Contact" handleClick={() => setIsOpen(false)} />
+                    <NavItem to="/events" label="Events" handleClick={() => setIsOpen(false)} />
+
+                    {/* ✅ Find Donor Button */}
+                    <Link to="/find-donor">
+                        <button className="ml-4 bg-[#fb4673] hover:bg-[#28bca9] text-white px-4 py-2 rounded-lg transition duration-300">
+                            Find Donor
+                        </button>
+                    </Link>
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -60,26 +51,17 @@ const Navbar = () => {
                     transition={{ duration: 0.3 }}
                     className="md:hidden bg-white/10 backdrop-blur-lg text-white flex flex-col items-center space-y-4 py-4"
                 >
-                    <NavItem
-                        to="/"
-                        label="Home"
-                        handleClick={() => setIsOpen(false)}
-                    />
-                    <NavItem
-                        to="/about"
-                        label="About"
-                        handleClick={() => setIsOpen(false)}
-                    />
-                    <NavItem
-                        to="/contact"
-                        label="Contact"
-                        handleClick={() => setIsOpen(false)}
-                    />
-                    <NavItem
-                        to="/events"
-                        label="Events"
-                        handleClick={() => setIsOpen(false)}
-                    />
+                    <NavItem to="/" label="Home" handleClick={() => setIsOpen(false)} />
+                    <NavItem to="/about" label="About" handleClick={() => setIsOpen(false)} />
+                    <NavItem to="/contact" label="Contact" handleClick={() => setIsOpen(false)} />
+                    <NavItem to="/events" label="Events" handleClick={() => setIsOpen(false)} />
+
+                    {/* ✅ Find Donor Button (Mobile) */}
+                    <Link to="/find-donor" onClick={() => setIsOpen(false)}>
+                        <button className="mt-2 bg-[#fb4673] hover:bg-[#28bca9] text-white px-4 py-2 rounded-lg transition duration-300">
+                            Find Donor
+                        </button>
+                    </Link>
                 </motion.div>
             )}
         </nav>
