@@ -3,7 +3,8 @@ const router = express.Router();
 const {
     registerDonor,
     getAllDonors,
-    updateDonor
+    updateDonor,
+    searchDonors
 } = require("../controllers/donorController");
 
 // POST /api/donate/   →  Register donor
@@ -11,6 +12,8 @@ router.post("/", registerDonor);
 
 // GET /api/donate/all →  Get all donors
 router.get("/all", getAllDonors);
+
+router.get("/search", searchDonors);
 
 // PUT /api/donate/:id →  Update a donor (optional)
 router.put("/:id", updateDonor);

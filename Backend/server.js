@@ -30,6 +30,7 @@ app.use("/api/hospitals", hospitalRoutes);
 app.use("/api/emergency", emergencyRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/donate", donorRoutes);
+app.use("/api/donors", donorRoutes); 
 
 // MongoDB Connection
 mongoose

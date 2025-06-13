@@ -29,13 +29,40 @@ const registerDonor = async (req, res) => {
 // Get all donors
 const getAllDonors = async (req, res) => {
     try {
-        const donors = await Donor.find().select("-__v");
+        const { bloodGroup, city, state } = req.query;
+
+        const query = {};
+        if (bloodGroup) query.bloodGroup = bloodGroup;
+        if (city) query.city = new RegExp(city, "i"); // case-insensitive
+        if (state) query.state = new RegExp(state, "i");
+
+        const donors = await Donor.find(query).select("-__v");
         res.json(donors);
     } catch (err) {
         console.error("Error fetching donors:", err);
         res.status(500).json({ message: "Failed to retrieve donors." });
     }
 };
+
+// Search donors by blood group, city, and state
+const searchDonors = async (req, res) => {
+    try {
+        const { bloodGroup, city, state } = req.query;
+        const query = {};
+
+        if (bloodGroup) query.bloodGroup = bloodGroup;
+        if (city) query.city = { $regex: new RegExp(city, "i") }; // case-insensitive
+        if (state) query.state = { $regex: new RegExp(state, "i") };
+
+        const donors = await Donor.find(query).select("-__v");
+        res.json(donors);
+    } catch (err) {
+        console.error("Error searching donors:", err);
+        res.status(500).json({ message: "Failed to search donors." });
+    }
+};
+
+
 
 // (Optional) Update donor profile if needed
 const updateDonor = async (req, res) => {
@@ -64,5 +91,6 @@ const updateDonor = async (req, res) => {
 module.exports = {
     registerDonor,
     getAllDonors,
-    updateDonor
-};
+    updateDonor,
+    searchDonors
+}

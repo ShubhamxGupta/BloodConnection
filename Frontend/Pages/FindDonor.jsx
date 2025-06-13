@@ -2,33 +2,6 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, User, MapPin, Heart } from "lucide-react";
 
-const mockDonors = [
-    {
-        name: "Amit Sharma",
-        bloodGroup: "A+",
-        city: "Delhi",
-        state: "Delhi",
-    },
-    {
-        name: "Priya Singh",
-        bloodGroup: "O-",
-        city: "Mumbai",
-        state: "Maharashtra",
-    },
-    {
-        name: "Rahul Verma",
-        bloodGroup: "B+",
-        city: "Delhi",
-        state: "Delhi",
-    },
-    {
-        name: "Sneha Patel",
-        bloodGroup: "AB+",
-        city: "Ahmedabad",
-        state: "Gujarat",
-    },
-];
-
 const FindDonor = () => {
     const [form, setForm] = useState({ bloodGroup: "", city: "", state: "" });
     const [results, setResults] = useState([]);
@@ -38,20 +11,27 @@ const FindDonor = () => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const handleSearch = (e) => {
+    const handleSearch = async (e) => {
         e.preventDefault();
-        // Filter mock donors (replace with API call in production)
-        const filtered = mockDonors.filter(
-            (d) =>
-                (!form.bloodGroup || d.bloodGroup === form.bloodGroup) &&
-                (!form.city ||
-                    d.city.toLowerCase() === form.city.toLowerCase()) &&
-                (!form.state ||
-                    d.state.toLowerCase() === form.state.toLowerCase())
-        );
-        setResults(filtered);
         setSearched(true);
+    
+        try {
+            const query = new URLSearchParams(form).toString();
+            const response = await fetch(`http://localhost:5000/api/donors/search?${query}`);
+            const data = await response.json();
+    
+            if (response.ok) {
+                setResults(data);
+            } else {
+                console.error("Error:", data.message);
+                setResults([]);
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            setResults([]);
+        }
     };
+    
 
     return (
         <section className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#f0f9ff] via-[#e6f3ff] to-[#f0f9ff] py-12 px-4">
