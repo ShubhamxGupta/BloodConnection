@@ -45,6 +45,12 @@ const Navbar = () => {
                     <NavItem to="/about" label="About" />
                     <NavItem to="/contact" label="Contact" />
                     <NavItem to="/events" label="Events" />
+
+                    <Link to="/find-donor">
+                        <button className="ml-4 bg-[#fb4673] hover:bg-[#28bca9] text-white px-4 py-2 rounded-lg transition duration-300">
+                            Find Donor
+                        </button>
+                    </Link>
                 </div>
 
                 {/* Mobile Menu Toggle */}
