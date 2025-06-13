@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Chatbot from "../Components/ChatBot";
 
@@ -10,7 +10,6 @@ const UserDashboard = () => {
     const [errors, setErrors] = useState({ user: null, hospitals: null });
     const [showAllHospitals, setShowAllHospitals] = useState(false);
     const [toastShown, setToastShown] = useState(false); // Prevent multiple toasts
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -110,25 +109,6 @@ const UserDashboard = () => {
         );
     };
 
-    // Logout handler
-    const handleLogout = async () => {
-        const token = localStorage.getItem("token");
-        try {
-            await fetch("http://localhost:5000/api/auth/logout/user", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    ...(token && { Authorization: `Bearer ${token}` }),
-                },
-            });
-        } catch (err) {
-            // Optionally show error
-        } finally {
-            localStorage.removeItem("token");
-            navigate("/login");
-        }
-    };
-
     // Show loading spinner if either user or hospitals are loading
     if (loading.user || loading.hospitals) {
         return (
@@ -140,16 +120,6 @@ const UserDashboard = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#f0f9ff] via-[#e6f3ff] to-[#f0f9ff] pt-20 p-6">
-            {/* Logout button at top right */}
-            <div className="flex justify-end max-w-7xl mx-auto mb-2">
-                <button
-                    onClick={handleLogout}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow"
-                >
-                    Logout
-                </button>
-            </div>
-
             {errors.user && (
                 <div className="text-center mx-auto max-w-2xl mt-4 mb-4 text-red-700 bg-red-100 p-4 rounded-lg border border-red-200">
                     {errors.user}

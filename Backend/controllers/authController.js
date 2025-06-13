@@ -13,13 +13,18 @@ const isValidEmail = (email) =>
     typeof email === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 const registerUser = async (req, res) => {
-    let { name, email, phone, password, bloodGroup, location, organDonation } =
-        req.body;
+    let {
+        name,
+        email,
+        phone,
+        password,
+        bloodGroup,
+        location,
+        organDonation,
+    } = req.body;
     try {
         if (!name || !email || !password || !bloodGroup || !location) {
-            return res
-                .status(400)
-                .json({ message: "All required fields must be provided" });
+            return res.status(400).json({ message: "All required fields must be provided" });
         }
         if (!isValidEmail(email)) {
             return res.status(400).json({ message: "Invalid email format" });
@@ -42,26 +47,22 @@ const registerUser = async (req, res) => {
         res.status(201).json({ message: "User registered successfully" });
     } catch (err) {
         console.error("Error in registerUser:", err); // Log registration error
-        res.status(500).json({
-            message: "Registration failed. Please try again later.",
-        });
+        res.status(500).json({ message: "Registration failed. Please try again later." });
     }
 };
 
 const registerHospital = async (req, res) => {
-    let { email, phone, password, hospitalName, registrationNumber, location } =
-        req.body;
+    let {
+        email,
+        phone,
+        password,
+        hospitalName,
+        registrationNumber,
+        location,
+    } = req.body;
     try {
-        if (
-            !email ||
-            !password ||
-            !hospitalName ||
-            !registrationNumber ||
-            !location
-        ) {
-            return res
-                .status(400)
-                .json({ message: "All required fields must be provided" });
+        if (!email || !password || !hospitalName || !registrationNumber || !location) {
+            return res.status(400).json({ message: "All required fields must be provided" });
         }
         if (!isValidEmail(email)) {
             return res.status(400).json({ message: "Invalid email format" });
@@ -83,9 +84,7 @@ const registerHospital = async (req, res) => {
         res.status(201).json({ message: "Hospital registered successfully" });
     } catch (err) {
         console.error("Error in registerHospital:", err); // Log registration error
-        res.status(500).json({
-            message: "Registration failed. Please try again later.",
-        });
+        res.status(500).json({ message: "Registration failed. Please try again later." });
     }
 };
 
@@ -93,9 +92,7 @@ const loginUser = async (req, res) => {
     let { email, password } = req.body;
     try {
         if (!email || !password) {
-            return res
-                .status(400)
-                .json({ message: "Email and password are required" });
+            return res.status(400).json({ message: "Email and password are required" });
         }
         email = email.toLowerCase();
         const user = await User.findOne({ email });
@@ -117,15 +114,10 @@ const loginUser = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
         );
-        // Save session token in user.sessions
-        user.sessions.push({ token });
-        await user.save();
         res.json({ token, userType: "user", userName: user.name }); // Send userName in response
     } catch (err) {
         console.error("Login error:", err);
-        res.status(500).json({
-            message: "Server error. Please try again later.",
-        });
+        res.status(500).json({ message: "Server error. Please try again later." });
     }
 };
 
@@ -133,9 +125,7 @@ const loginHospital = async (req, res) => {
     let { email, password } = req.body;
     try {
         if (!email || !password) {
-            return res
-                .status(400)
-                .json({ message: "Email and password are required" });
+            return res.status(400).json({ message: "Email and password are required" });
         }
         email = email.toLowerCase();
         const hospital = await Hospital.findOne({ email });
@@ -156,9 +146,7 @@ const loginHospital = async (req, res) => {
         res.json({ token, userType: "hospital" });
     } catch (err) {
         console.error("Login error:", err);
-        res.status(500).json({
-            message: "Server error. Please try again later.",
-        });
+        res.status(500).json({ message: "Server error. Please try again later." });
     }
 };
 
