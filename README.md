@@ -27,10 +27,12 @@
 
 1. Clone the repository:
 
-<pre>git clone https://github.com/ShubhamxGupta/BloodConnection.git <br/> cd BloodConnection</pre>
+    <pre>
+    git clone https://github.com/ShubhamxGupta/BloodConnection.git <br/> cd BloodConnection
+    </pre>
 
 2. Install dependencies for frontend and backend:
-   <pre>
+<pre>
    cd Frontend
    npm install
    cd ../Backend
@@ -53,7 +55,7 @@
    npm start
    </pre>
 
-3. Open your browser at \`http://localhost:5173\`
+3. Open your browser at http://localhost:5173
 
 ---
 
