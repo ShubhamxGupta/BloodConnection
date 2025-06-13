@@ -13,7 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import * as pdfjs from "pdfjs-dist";
 
 // Set worker path for pdf.js
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `${window.location.origin}/pdf.worker.min.mjs`; // Use local worker with full URL and .mjs extension
 
 const Chatbot = () => {
     const [isOpen, setIsOpen] = useState(false);

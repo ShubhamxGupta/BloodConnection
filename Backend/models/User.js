@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
     location: {
         city: { type: String, required: true },
         state: { type: String, required: true },
+        latitude: { type: Number },
+        longitude: { type: Number },
     },
     organDonation: { type: Boolean, default: false },
 });

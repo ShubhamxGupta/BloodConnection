@@ -36,6 +36,7 @@ const registerUser = async (req, res) => {
 };
 
 const registerHospital = async (req, res) => {
+    console.log("registerHospital function called with body:", req.body); // Add this log
     const {
         email,
         phone,
