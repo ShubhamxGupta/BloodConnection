@@ -28,16 +28,10 @@
 1. Clone the repository:
 
     <pre>
-    git clone https://github.com/ShubhamxGupta/BloodConnection.git <br/> cd BloodConnection
-    </pre>
+    git clone https://github.com/ShubhamxGupta/BloodConnection.git <br/>cd BloodConnection</pre>
 
 2. Install dependencies for frontend and backend:
-<pre>
-   cd Frontend
-   npm install
-   cd ../Backend
-   npm install
-   </pre>
+    <pre>cd Frontend <br />npm install<br/>cd Backend<br />npm install</pre>
 
 ### Running Locally
 
@@ -45,14 +39,14 @@
 
    <pre>
    cd Backend
-   npm start
+   node server.js
    </pre>
 
 2. Start frontend server (in a new terminal):
 
    <pre>
    cd Frontend
-   npm start
+   npm run dev
    </pre>
 
 3. Open your browser at http://localhost:5173
