@@ -210,8 +210,14 @@ const getHospitalById = async (req, res) => {
 const addReview = async (req, res) => {
     try {
         const { rating, comment } = req.body;
+        if (typeof rating !== "number" || rating < 1 || rating > 5) {
+            return res.status(400).json({ message: "Rating must be between 1 and 5" });
+        }
+        // (Optional) Validate comment length
+        if (comment && comment.length > 500) {
+            return res.status(400).json({ message: "Comment is too long (max 500 chars)" });
+        }
         const hospital = await Hospital.findById(req.params.id);
-
         if (!hospital) {
             return res.status(404).json({ message: "Hospital not found" });
         }
@@ -238,10 +244,12 @@ const requestBlood = async (req, res) => {
     try {
         const { hospitalId } = req.params;
         const { patientName, bloodGroup, unitsRequired } = req.body;
-
         // Input validation
         if (!patientName || !bloodGroup || !unitsRequired) {
             return res.status(400).json({ message: "Missing required fields" });
+        }
+        if (typeof unitsRequired !== "number" || unitsRequired < 1) {
+            return res.status(400).json({ message: "Units required must be a positive number" });
         }
 
         const hospital = await Hospital.findById(hospitalId);

@@ -1,8 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 
 const Contact = () => {
+    // Form state
+    const [form, setForm] = useState({ name: "", email: "", message: "" });
+    const [submitting, setSubmitting] = useState(false);
+    const [feedback, setFeedback] = useState("");
+    const [errors, setErrors] = useState({});
+
+    // Simple email regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+        setErrors({ ...errors, [e.target.name]: undefined });
+    };
+
+    const validate = () => {
+        const newErrors = {};
+        if (!form.name.trim()) newErrors.name = "Name is required";
+        if (!form.email.trim()) newErrors.email = "Email is required";
+        else if (!emailRegex.test(form.email)) newErrors.email = "Invalid email";
+        if (!form.message.trim()) newErrors.message = "Message is required";
+        return newErrors;
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setFeedback("");
+        const validationErrors = validate();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+        setSubmitting(true);
+        // Simulate async send
+        setTimeout(() => {
+            setSubmitting(false);
+            setFeedback("Thank you for contacting us! We'll get back to you soon.");
+            setForm({ name: "", email: "", message: "" });
+        }, 1200);
+    };
+
     return (
         <section className="min-h-screen bg-white text-black">
             {/* Hero Section */}
@@ -53,20 +93,23 @@ const Contact = () => {
                         <h3 className="text-xl font-semibold">Follow Us</h3>
                         <div className="flex space-x-4 mt-2">
                             <a
-                                href="#"
+                                href="javascript:void(0)"
                                 className="text-[#fc4848] hover:text-black transition"
+                                aria-label="Facebook"
                             >
                                 Facebook
                             </a>
                             <a
-                                href="#"
+                                href="javascript:void(0)"
                                 className="text-[#fc4848] hover:text-black transition"
+                                aria-label="Twitter"
                             >
                                 Twitter
                             </a>
                             <a
-                                href="#"
+                                href="javascript:void(0)"
                                 className="text-[#fc4848] hover:text-black transition"
+                                aria-label="Instagram"
                             >
                                 Instagram
                             </a>
@@ -84,23 +127,33 @@ const Contact = () => {
                     <h2 className="text-3xl font-semibold mb-4">
                         Send Us a Message
                     </h2>
-                    <form className="space-y-4">
+                    <form className="space-y-4" onSubmit={handleSubmit} noValidate>
                         <div>
                             <label className="block text-lg">Your Name</label>
                             <input
                                 type="text"
-                                className="w-full p-3 mt-1 rounded-lg bg-white text-black border border-gray-300 focus:outline-none focus:border-[#fc4848]"
+                                name="name"
+                                value={form.name}
+                                onChange={handleChange}
+                                className={`w-full p-3 mt-1 rounded-lg bg-white text-black border ${errors.name ? "border-red-400" : "border-gray-300"} focus:outline-none focus:border-[#fc4848]`}
                                 placeholder="John Doe"
+                                disabled={submitting}
                             />
+                            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                         </div>
 
                         <div>
                             <label className="block text-lg">Your Email</label>
                             <input
                                 type="email"
-                                className="w-full p-3 mt-1 rounded-lg bg-white text-black border border-gray-300 focus:outline-none focus:border-[#fc4848]"
+                                name="email"
+                                value={form.email}
+                                onChange={handleChange}
+                                className={`w-full p-3 mt-1 rounded-lg bg-white text-black border ${errors.email ? "border-red-400" : "border-gray-300"} focus:outline-none focus:border-[#fc4848]`}
                                 placeholder="example@mail.com"
+                                disabled={submitting}
                             />
+                            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                         </div>
 
                         <div>
@@ -109,19 +162,26 @@ const Contact = () => {
                             </label>
                             <textarea
                                 rows="4"
-                                className="w-full p-3 mt-1 rounded-lg bg-white text-black border border-gray-300 focus:outline-none focus:border-[#fc4848]"
+                                name="message"
+                                value={form.message}
+                                onChange={handleChange}
+                                className={`w-full p-3 mt-1 rounded-lg bg-white text-black border ${errors.message ? "border-red-400" : "border-gray-300"} focus:outline-none focus:border-[#fc4848]`}
                                 placeholder="Type your message here..."
+                                disabled={submitting}
                             ></textarea>
+                            {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
                         </div>
 
                         <motion.button
                             type="submit"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="w-full bg-[#fc4848] hover:bg-black text-white py-3 mt-4 rounded-lg text-lg font-semibold transition flex items-center justify-center"
+                            className="w-full bg-[#fc4848] hover:bg-black text-white py-3 mt-4 rounded-lg text-lg font-semibold transition flex items-center justify-center disabled:opacity-60"
+                            disabled={submitting}
                         >
-                            Send Message <Send className="ml-2" />
+                            {submitting ? "Sending..." : <>Send Message <Send className="ml-2" /></>}
                         </motion.button>
+                        {feedback && <p className="text-green-600 text-center mt-3">{feedback}</p>}
                     </form>
                 </motion.div>
             </div>

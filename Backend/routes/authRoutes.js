@@ -1,3 +1,4 @@
+// Authentication and registration routes for users and hospitals
 const express = require("express");
 const {
     registerUser,
@@ -10,7 +11,7 @@ const router = express.Router();
 
 router.post("/register/user", registerUser);
 router.post("/register/hospital", registerHospital);
-router.post("/login/user", loginUser); // Ensure this endpoint is correct
+router.post("/login/user", loginUser);
 router.post("/login/hospital", loginHospital);
 
 module.exports = router;

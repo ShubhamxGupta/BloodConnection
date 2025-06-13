@@ -4,13 +4,25 @@ const User = require("../models/User");
 const EmergencyRequest = require("../models/EmergencyRequest");
 const router = express.Router();
 
-router.get("/data", async (req, res) => {
+router.get("/data", async (_req, res) => {
     try {
         const [hospitals, users, emergencies] = await Promise.all([
             Hospital.find().select("-password"),
             User.find().select("-password"),
             EmergencyRequest.find().sort("-createdAt").limit(10),
         ]);
+
+        // Initialize blood inventory accumulator
+        const initialInventory = {
+            aPositive: 0,
+            aNegative: 0,
+            bPositive: 0,
+            bNegative: 0,
+            abPositive: 0,
+            abNegative: 0,
+            oPositive: 0,
+            oNegative: 0,
+        };
 
         // Calculate more detailed statistics
         const statistics = {
@@ -19,16 +31,6 @@ router.get("/data", async (req, res) => {
             activeEmergencies: emergencies.filter((e) => e.status === "PENDING")
                 .length,
             bloodInventory: hospitals.reduce((acc, hospital) => {
-                // Ensure all blood types are initialized
-                if (!acc.aPositive) acc.aPositive = 0;
-                if (!acc.aNegative) acc.aNegative = 0;
-                if (!acc.bPositive) acc.bPositive = 0;
-                if (!acc.bNegative) acc.bNegative = 0;
-                if (!acc.abPositive) acc.abPositive = 0;
-                if (!acc.abNegative) acc.abNegative = 0;
-                if (!acc.oPositive) acc.oPositive = 0;
-                if (!acc.oNegative) acc.oNegative = 0;
-
                 // Sum up inventory from each hospital
                 if (hospital.inventory) {
                     acc.aPositive += hospital.inventory.aPositive || 0;
@@ -41,12 +43,13 @@ router.get("/data", async (req, res) => {
                     acc.oNegative += hospital.inventory.oNegative || 0;
                 }
                 return acc;
-            }, {}),
+            }, { ...initialInventory }),
             cityWiseDistribution: hospitals.reduce((acc, h) => {
-                acc[h.location.city] = (acc[h.location.city] || 0) + 1;
+                const city = h.location && h.location.city ? h.location.city : "Unknown";
+                acc[city] = (acc[city] || 0) + 1;
                 return acc;
             }, {}),
-            recentDonations: 0, // You can add more fields based on your data model
+            recentDonations: 0, // TODO: Implement recentDonations if data available
             averageRating: calculateAverageRating(hospitals),
             emergencyResponseTime: "30 minutes",
             bloodTypeDistribution: calculateBloodTypeDistribution(users),
@@ -73,19 +76,20 @@ router.get("/data", async (req, res) => {
             statistics,
         });
     } catch (error) {
+        console.error("Error fetching chatbot data:", error);
         res.status(500).json({ message: "Error fetching chatbot data" });
     }
 });
 
 function calculateAverageRating(hospitals) {
-    const ratings = hospitals.flatMap((h) => h.reviews.map((r) => r.rating));
+    const ratings = hospitals.flatMap((h) => (Array.isArray(h.reviews) ? h.reviews.map((r) => r.rating) : []));
     return ratings.length
         ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)
         : 0;
 }
 
 function calculateHospitalRating(hospital) {
-    const ratings = hospital.reviews.map((r) => r.rating);
+    const ratings = Array.isArray(hospital.reviews) ? hospital.reviews.map((r) => r.rating) : [];
     return ratings.length
         ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)
         : 0;

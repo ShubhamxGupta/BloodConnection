@@ -52,19 +52,22 @@ const Chatbot = () => {
     }, []);
 
     useEffect(() => {
-        // Add welcome message when chat opens
-        setMessages([
-            {
-                role: "bot",
-                content: `Hello! I can help you with:
+        // Add welcome message only if messages is empty
+        setMessages((prev) =>
+            prev.length === 0
+                ? [
+                      {
+                          role: "bot",
+                          content: `Hello! I can help you with:
         1. Blood availability (e.g., "Is A+ blood available?")
         2. Hospital information (e.g., "How many hospitals are there?")
         3. Donor statistics (e.g., "How many donors are registered?")
         4. Blood inventory (e.g., "Show blood group statistics")
-        
-        What would you like to know?`,
-            },
-        ]);
+        \nWhat would you like to know?`,
+                      },
+                  ]
+                : prev
+        );
     }, []);
 
     // Enhanced query processing function
@@ -560,7 +563,8 @@ Please ensure:
 
     // Handle "Enter" Key Press to Send Message
     const handleKeyDown = (e) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
             handleSend();
         }
     };
@@ -574,6 +578,7 @@ Please ensure:
                     exit={{ scale: 0 }}
                     className="fixed bottom-5 right-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all"
                     onClick={toggleChat}
+                    aria-label="Open chat assistant"
                 >
                     <MessageCircle size={24} />
                 </motion.button>
@@ -706,6 +711,7 @@ Please ensure:
                                     onKeyDown={handleKeyDown}
                                     placeholder="Ask me anything..."
                                     className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-blue-600 transition-colors"
+                                    disabled={loading || !botData}
                                 />
                                 <button
                                     onClick={handleSend}

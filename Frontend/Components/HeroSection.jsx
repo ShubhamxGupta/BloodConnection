@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { LogIn, UserPlus, AlertCircle } from "lucide-react";
+import { LogIn, UserPlus, AlertCircle, Heart } from "lucide-react";
 import heroVideo from "../assets/hero-video.mp4";
 
 const HeroSection = () => {
@@ -24,7 +24,7 @@ const HeroSection = () => {
                         today.
                     </p>
 
-                    {/* Login & Signup Buttons */}
+                    {/* Login, Signup & Donate Buttons */}
                     <div className="mt-4 flex flex-col sm:flex-row gap-4">
                         <Link
                             to="/login"
@@ -38,6 +38,12 @@ const HeroSection = () => {
                             className="flex items-center border-2 border-[#fc4848] text-[#fc4848] px-6 py-3 rounded-lg font-semibold hover:bg-[#fc4848] hover:text-white transition"
                         >
                             <UserPlus className="mr-2" /> Sign Up
+                        </Link>
+                        <Link
+                            to="/donate"
+                            className="flex items-center border-2 border-[#28bca9] text-[#28bca9] px-6 py-3 rounded-lg font-semibold hover:bg-[#28bca9] hover:text-white transition"
+                        >
+                            <Heart className="mr-2" /> Donate
                         </Link>
                     </div>
 

@@ -60,10 +60,26 @@ const Navbar = () => {
                     transition={{ duration: 0.3 }}
                     className="md:hidden bg-white/10 backdrop-blur-lg text-white flex flex-col items-center space-y-4 py-4"
                 >
-                    <NavItem to="/" label="Home" />
-                    <NavItem to="/about" label="About" />
-                    <NavItem to="/contact" label="Contact" />
-                    <NavItem to="/events" label="Events" />
+                    <NavItem
+                        to="/"
+                        label="Home"
+                        handleClick={() => setIsOpen(false)}
+                    />
+                    <NavItem
+                        to="/about"
+                        label="About"
+                        handleClick={() => setIsOpen(false)}
+                    />
+                    <NavItem
+                        to="/contact"
+                        label="Contact"
+                        handleClick={() => setIsOpen(false)}
+                    />
+                    <NavItem
+                        to="/events"
+                        label="Events"
+                        handleClick={() => setIsOpen(false)}
+                    />
                 </motion.div>
             )}
         </nav>

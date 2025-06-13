@@ -149,7 +149,7 @@ const Footer = () => {
                     >
                         <input
                             type="email"
-                            name="mail"
+                            name="email"
                             aria-label="Email for newsletter"
                             placeholder="Enter your email"
                             className="px-4 py-2 w-64 rounded-l-md focus:outline-none bg-white text-black"

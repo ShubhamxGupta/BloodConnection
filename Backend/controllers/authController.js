@@ -3,8 +3,17 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User.js");
 const Hospital = require("../models/Hospital.js");
 
+const checkJwtSecret = () => {
+    if (!process.env.JWT_SECRET) {
+        throw new Error("JWT_SECRET is not set in environment variables");
+    }
+};
+
+const isValidEmail = (email) =>
+    typeof email === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
 const registerUser = async (req, res) => {
-    const {
+    let {
         name,
         email,
         phone,
@@ -14,6 +23,13 @@ const registerUser = async (req, res) => {
         organDonation,
     } = req.body;
     try {
+        if (!name || !email || !password || !bloodGroup || !location) {
+            return res.status(400).json({ message: "All required fields must be provided" });
+        }
+        if (!isValidEmail(email)) {
+            return res.status(400).json({ message: "Invalid email format" });
+        }
+        email = email.toLowerCase();
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "Email already in use" });
@@ -31,13 +47,12 @@ const registerUser = async (req, res) => {
         res.status(201).json({ message: "User registered successfully" });
     } catch (err) {
         console.error("Error in registerUser:", err); // Log registration error
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ message: "Registration failed. Please try again later." });
     }
 };
 
 const registerHospital = async (req, res) => {
-    console.log("registerHospital function called with body:", req.body); // Add this log
-    const {
+    let {
         email,
         phone,
         password,
@@ -46,6 +61,13 @@ const registerHospital = async (req, res) => {
         location,
     } = req.body;
     try {
+        if (!email || !password || !hospitalName || !registrationNumber || !location) {
+            return res.status(400).json({ message: "All required fields must be provided" });
+        }
+        if (!isValidEmail(email)) {
+            return res.status(400).json({ message: "Invalid email format" });
+        }
+        email = email.toLowerCase();
         const existingHospital = await Hospital.findOne({ email });
         if (existingHospital) {
             return res.status(400).json({ message: "Email already in use" });
@@ -62,13 +84,17 @@ const registerHospital = async (req, res) => {
         res.status(201).json({ message: "Hospital registered successfully" });
     } catch (err) {
         console.error("Error in registerHospital:", err); // Log registration error
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ message: "Registration failed. Please try again later." });
     }
 };
 
 const loginUser = async (req, res) => {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
     try {
+        if (!email || !password) {
+            return res.status(400).json({ message: "Email and password are required" });
+        }
+        email = email.toLowerCase();
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: "Invalid credentials" });
@@ -78,7 +104,7 @@ const loginUser = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
-
+        checkJwtSecret();
         const token = jwt.sign(
             {
                 id: user._id,
@@ -91,13 +117,17 @@ const loginUser = async (req, res) => {
         res.json({ token, userType: "user", userName: user.name }); // Send userName in response
     } catch (err) {
         console.error("Login error:", err);
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ message: "Server error. Please try again later." });
     }
 };
 
 const loginHospital = async (req, res) => {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
     try {
+        if (!email || !password) {
+            return res.status(400).json({ message: "Email and password are required" });
+        }
+        email = email.toLowerCase();
         const hospital = await Hospital.findOne({ email });
         if (!hospital) {
             return res.status(400).json({ message: "Invalid credentials" });
@@ -107,7 +137,7 @@ const loginHospital = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
-
+        checkJwtSecret();
         const token = jwt.sign(
             { id: hospital._id, type: "hospital" },
             process.env.JWT_SECRET,
@@ -116,7 +146,7 @@ const loginHospital = async (req, res) => {
         res.json({ token, userType: "hospital" });
     } catch (err) {
         console.error("Login error:", err);
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ message: "Server error. Please try again later." });
     }
 };
 
