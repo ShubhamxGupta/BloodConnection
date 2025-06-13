@@ -4,6 +4,10 @@ const Hospital = require("../models/Hospital");
 const createEmergencyRequest = async (req, res) => {
     try {
         const { name, phone, bloodGroup, units, hospital, location } = req.body;
+        // Input validation
+        if (!name || !phone || !bloodGroup || !units || !hospital || !location || !location.city) {
+            return res.status(400).json({ message: "All required fields must be provided" });
+        }
 
         // Create new emergency request
         const emergencyRequest = new EmergencyRequest({
@@ -13,14 +17,16 @@ const createEmergencyRequest = async (req, res) => {
             units,
             hospital,
             location,
+            status: "PENDING",
         });
 
         await emergencyRequest.save();
 
-        // Find hospitals in the same city
-        const nearbyHospitals = await Hospital.find({
-            "location.city": location.city,
-        });
+        // Find hospitals in the same city (case-insensitive)
+        // (Commented out since not used, uncomment if needed)
+        // const nearbyHospitals = await Hospital.find({
+        //     "location.city": { $regex: `^${location.city}$`, $options: "i" },
+        // });
 
         // In a real application, you would:
         // 1. Send notifications to nearby hospitals
@@ -44,6 +50,7 @@ const getEmergencyRequests = async (req, res) => {
         }).sort({ createdAt: -1 });
         res.json(requests);
     } catch (error) {
+        console.error("Error fetching emergency requests:", error);
         res.status(500).json({ message: "Error fetching emergency requests" });
     }
 };

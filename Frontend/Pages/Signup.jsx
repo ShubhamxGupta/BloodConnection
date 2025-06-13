@@ -25,7 +25,7 @@ const schema = yup.object().shape({
     email: yup.string().email("Invalid email").required("Email is required"),
     phone: yup
         .string()
-        .matches(/^[0-9]+$/, "Invalid phone number")
+        .matches(/^[0-9]{10,15}$/, "Phone number must be 10-15 digits")
         .required("Phone number is required"),
     password: yup
         .string()
@@ -109,17 +109,12 @@ const Signup = () => {
             if (data.password !== data.confirmPassword) {
                 throw new Error("Passwords do not match");
             }
-
-            // Add userType to the data being sent
-            const submitData = {
-                ...data,
-                userType: userType,
-                // Send raw password - backend will handle hashing
-                password: data.password,
-            };
+            // Remove userType from payload
+            const submitData = { ...data };
 
             // Remove unnecessary fields
             delete submitData.confirmPassword;
+            delete submitData.userType;
             if (userType === "user") {
                 delete submitData.hospitalName;
                 delete submitData.registrationNumber;
@@ -141,10 +136,12 @@ const Signup = () => {
                     body: JSON.stringify(submitData),
                 }
             );
-
-            const responseData = await response.json();
-            console.log("Response data:", responseData);
-
+            let responseData;
+            try {
+                responseData = await response.json();
+            } catch (jsonErr) {
+                responseData = { message: "Signup failed. Please try again." };
+            }
             if (!response.ok) {
                 throw new Error(responseData.message || "Signup failed");
             }

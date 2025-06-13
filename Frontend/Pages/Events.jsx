@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../Components/Navbar";
+// WARNING: Do not expose sensitive API keys in frontend code. Move API calls to backend for production.
 import { motion } from "framer-motion";
 import {
     FaCalendarAlt,
@@ -9,8 +9,8 @@ import {
 } from "react-icons/fa";
 import { MdEventAvailable } from "react-icons/md";
 
-const API_KEY = "AIzaSyD9wYUNE67azqMmYCUKQQ2ATfOopW8JFNk"; // Replace with your actual API key
-const CALENDAR_ID = "singh0810.akash@gmail.com"; // Replace with your Calendar ID
+const API_KEY = "AIzaSyD9wYUNE67azqMmYCUKQQ2ATfOopW8JFNk"; // WARNING: Exposed in frontend
+const CALENDAR_ID = "singh0810.akash@gmail.com";
 
 const Events = () => {
     const [events, setEvents] = useState([]);
@@ -25,12 +25,16 @@ const Events = () => {
                     `https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events?key=${API_KEY}&timeMin=${now}&singleEvents=true&orderBy=startTime`
                 );
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error("API Error Response:", errorData); // Log the error response
-                    throw new Error("Failed to fetch events");
+                    let errorMsg = "Failed to fetch events";
+                    try {
+                        const errorData = await response.json();
+                        if (errorData.error && errorData.error.message) {
+                            errorMsg = errorData.error.message;
+                        }
+                    } catch {}
+                    throw new Error(errorMsg);
                 }
                 const data = await response.json();
-                console.log("API Response:", data); // Log the API response
                 setEvents(data.items || []);
             } catch (err) {
                 setError(err.message);
@@ -38,7 +42,6 @@ const Events = () => {
                 setLoading(false);
             }
         };
-
         fetchEvents();
     }, []);
 
@@ -63,8 +66,7 @@ const Events = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 flex flex-col items-center">
-            <Navbar />
-
+            {/* Navbar removed: handled by layout */}
             <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -80,76 +82,79 @@ const Events = () => {
                 <p className="text-lg text-gray-700 mb-10">
                     Join our blood donation events and help save lives
                 </p>
-
                 <div className="space-y-8">
                     {events.length > 0 ? (
-                        events.map((event) => (
-                            <motion.div
-                                key={event.id}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.5 }}
-                                whileHover={{ scale: 1.02 }}
-                                className="bg-white border-l-4 border-red-500 p-6 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300"
-                            >
-                                <div className="flex flex-col md:flex-row md:items-start md:justify-between">
-                                    <div className="flex-grow">
-                                        <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                                            {event.summary}
-                                        </h3>
-                                        <div className="space-y-3">
-                                            <div className="flex items-center text-gray-700">
-                                                <FaCalendarAlt className="text-red-500 mr-3" />
-                                                <span>
-                                                    {new Date(
-                                                        event.start.dateTime ||
-                                                            event.start.date
-                                                    ).toLocaleDateString(
-                                                        "en-US",
-                                                        {
-                                                            weekday: "long",
-                                                            year: "numeric",
-                                                            month: "long",
-                                                            day: "numeric",
-                                                        }
-                                                    )}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center text-gray-700">
-                                                <FaClock className="text-red-500 mr-3" />
-                                                <span>
-                                                    {new Date(
-                                                        event.start.dateTime ||
-                                                            event.start.date
-                                                    ).toLocaleTimeString(
-                                                        "en-US",
-                                                        {
-                                                            hour: "2-digit",
-                                                            minute: "2-digit",
-                                                        }
-                                                    )}
-                                                </span>
-                                            </div>
-                                            {event.location && (
+                        events.map((event) => {
+                            const isAllDay = !event.start.dateTime;
+                            return (
+                                <motion.div
+                                    key={event.id}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.5 }}
+                                    whileHover={{ scale: 1.02 }}
+                                    className="bg-white border-l-4 border-red-500 p-6 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300"
+                                >
+                                    <div className="flex flex-col md:flex-row md:items-start md:justify-between">
+                                        <div className="flex-grow">
+                                            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                                                {event.summary}
+                                            </h3>
+                                            <div className="space-y-3">
                                                 <div className="flex items-center text-gray-700">
-                                                    <FaMapMarkerAlt className="text-red-500 mr-3" />
+                                                    <FaCalendarAlt className="text-red-500 mr-3" />
                                                     <span>
-                                                        {event.location}
+                                                        {new Date(
+                                                            event.start.dateTime ||
+                                                                event.start.date
+                                                        ).toLocaleDateString(
+                                                            "en-US",
+                                                            {
+                                                                weekday: "long",
+                                                                year: "numeric",
+                                                                month: "long",
+                                                                day: "numeric",
+                                                            }
+                                                        )}
                                                     </span>
+                                                </div>
+                                                {!isAllDay && (
+                                                    <div className="flex items-center text-gray-700">
+                                                        <FaClock className="text-red-500 mr-3" />
+                                                        <span>
+                                                            {new Date(
+                                                                event.start.dateTime
+                                                            ).toLocaleTimeString(
+                                                                "en-US",
+                                                                {
+                                                                    hour: "2-digit",
+                                                                    minute: "2-digit",
+                                                                }
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                {event.location && (
+                                                    <div className="flex items-center text-gray-700">
+                                                        <FaMapMarkerAlt className="text-red-500 mr-3" />
+                                                        <span>
+                                                            {event.location}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            {event.description && (
+                                                <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                                                    <p className="text-gray-600">
+                                                        {event.description}
+                                                    </p>
                                                 </div>
                                             )}
                                         </div>
-                                        {event.description && (
-                                            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                                                <p className="text-gray-600">
-                                                    {event.description}
-                                                </p>
-                                            </div>
-                                        )}
                                     </div>
-                                </div>
-                            </motion.div>
-                        ))
+                                </motion.div>
+                            );
+                        })
                     ) : (
                         <motion.div
                             initial={{ opacity: 0 }}

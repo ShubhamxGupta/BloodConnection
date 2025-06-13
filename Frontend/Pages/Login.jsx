@@ -44,9 +44,12 @@ const Login = () => {
                     body: JSON.stringify(data),
                 }
             );
-
-            const result = await response.json();
-
+            let result;
+            try {
+                result = await response.json();
+            } catch (jsonErr) {
+                result = { message: "Login failed. Please try again." };
+            }
             if (!response.ok) {
                 throw new Error(result.message || "Login failed");
             }
@@ -64,7 +67,6 @@ const Login = () => {
             console.error("Error:", err.message);
             toast.error(err.message || "Something went wrong");
         } finally {
-            toast.success("Login successful");
             setIsLoading(false);
         }
     };
@@ -130,7 +132,7 @@ const Login = () => {
                     </div>
 
                     {/* Password */}
-                    <div>
+                    <div className="relative">
                         <label className="flex items-center text-lg">
                             <Lock className="mr-2 text-[#fb4673]" />
                             Password
@@ -148,7 +150,11 @@ const Login = () => {
                         <button
                             type="button"
                             onClick={() => setShowPassword((prev) => !prev)}
-                            className="absolute right-3 top-2 text-sm text-[#28bca9]"
+                            className="absolute right-3 top-9 text-sm text-[#28bca9]"
+                            aria-label={
+                                showPassword ? "Hide password" : "Show password"
+                            }
+                            tabIndex={0}
                         >
                             {showPassword ? "Hide" : "Show"}
                         </button>
