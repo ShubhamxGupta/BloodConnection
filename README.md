@@ -27,33 +27,31 @@
 
 1. Clone the repository:
 
-<pre> ```bash git clone https://github.com/ShubhamxGupta/BloodConnection.git <br/> cd BloodConnection ``` </pre>
+<pre>git clone https://github.com/ShubhamxGupta/BloodConnection.git <br/> cd BloodConnection</pre>
 
 2. Install dependencies for frontend and backend:
-<pre>
-   \`\`\`bash
+   <pre>
    cd Frontend
    npm install
    cd ../Backend
    npm install
-   \`\`\`
    </pre>
 
 ### Running Locally
 
 1. Start backend server:
 
-   \`\`\`bash
+   <pre>
    cd Backend
    npm start
-   \`\`\`
+   </pre>
 
 2. Start frontend server (in a new terminal):
 
-   \`\`\`bash
+   <pre>
    cd Frontend
    npm start
-   \`\`\`
+   </pre>
 
 3. Open your browser at \`http://localhost:5173\`
 
