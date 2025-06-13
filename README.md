@@ -27,8 +27,7 @@
 
 1. Clone the repository:
 
-    <pre>
-    git clone https://github.com/ShubhamxGupta/BloodConnection.git <br/>cd BloodConnection</pre>
+    <pre>git clone https://github.com/ShubhamxGupta/BloodConnection.git <br/>cd BloodConnection</pre>
 
 2. Install dependencies for frontend and backend:
     <pre>cd Frontend <br />npm install<br/>cd Backend<br />npm install</pre>
