@@ -6,7 +6,6 @@ import { Heart, HandHelping, Users, ShieldCheck, Star } from "lucide-react";
 const About = () => {
     return (
         <div className="min-h-screen bg-white flex flex-col items-center">
-            <Navbar />
 
             {/* Hero Section with Animation */}
             <motion.div
@@ -174,22 +173,23 @@ const About = () => {
             </div>
 
             {/* Call to Action */}
-            <div className="text-center mt-16 py-12 bg-gray-200">
-                <h2 className="text-3xl font-bold mb-4 text-gray-900">
+            <div className="text-center mt-16 py-12 bg-gray-100 bg-gradient-to-r from-[#ffe6e6] via-[#f8f8f8] to-[#e0f7f5] rounded-xl">
+                <h2 className="text-3xl font-extrabold mb-4 text-[#000000] drop-shadow-sm">
                     Join Us & Save Lives Today!
                 </h2>
-                <p className="mb-6 text-gray-700">
+                <p className="mb-8 text-gray-700 text-lg max-w-xl mx-auto">
                     Become a donor or request a donation – together, we can make
-                    a difference.
+                    a difference. Sign up and be part of the change that truly matters.
                 </p>
                 <a
                     href="/signup"
-                    className="px-6 py-3 bg-[#fc4848] hover:bg-red-600 text-white rounded-lg text-lg font-semibold shadow-md transition"
+                    className="inline-block px-8 py-4 bg-[#fc4848] hover:bg-[#d93c3c] text-white rounded-[10px] text-lg font-semibold shadow-lg transition-all duration-300 ease-in-out hover:scale-105"
                 >
                     Sign Up Now
                 </a>
             </div>
         </div>
+
     );
 };
 

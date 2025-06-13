@@ -75,17 +75,17 @@ const Contact = () => {
 
                     <div className="flex items-center">
                         <MapPin className="text-[#fc4848] mr-3" size={24} />
-                        <p>123 BloodBond Street, Blood City, 45678</p>
+                        <p>123 Donation Street, Chennai, TN</p>
                     </div>
 
                     <div className="flex items-center">
                         <Mail className="text-[#fc4848] mr-3" size={24} />
-                        <p>support@blooddonation.com</p>
+                        <p>support@bloodconnection.com</p>
                     </div>
 
                     <div className="flex items-center">
                         <Phone className="text-[#fc4848] mr-3" size={24} />
-                        <p>+123 456 7890</p>
+                        <p>+91 1234567890</p>
                     </div>
 
                     {/* Social Media Links */}
@@ -93,25 +93,36 @@ const Contact = () => {
                         <h3 className="text-xl font-semibold">Follow Us</h3>
                         <div className="flex space-x-4 mt-2">
                             <a
-                                href="javascript:void(0)"
+                                href="https://facebook.com/bloodconnection_bob"
+                        aria-label="Visit our Facebook"
+                        target="_blank"
                                 className="text-[#fc4848] hover:text-black transition"
-                                aria-label="Facebook"
                             >
                                 Facebook
                             </a>
                             <a
-                                href="javascript:void(0)"
+                        href="https://twitter.com/bloodconnection_bob"
+                        aria-label="Visit our Twitter"
+                        target="_blank"
                                 className="text-[#fc4848] hover:text-black transition"
-                                aria-label="Twitter"
                             >
                                 Twitter
                             </a>
                             <a
-                                href="javascript:void(0)"
+                        href="https://instagram.com/bloodconnection_bob"
+                        aria-label="Visit our Instagram"
+                        target="_blank"
                                 className="text-[#fc4848] hover:text-black transition"
-                                aria-label="Instagram"
                             >
                                 Instagram
+                            </a>
+                            <a
+                        href="https://linkedin.com/bloodconnection_bob"
+                        aria-label="Visit our LinkedIn"
+                        target="_blank"
+                                className="text-[#fc4848] hover:text-black transition"
+                            >
+                                LinkedIn
                             </a>
                         </div>
                     </div>
@@ -199,7 +210,7 @@ const Contact = () => {
                 >
                     <iframe
                         className="w-full h-full"
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.8354345093666!2d144.95373531590413!3d-37.81627974202102!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11fd81%3A0xf4c34d27541dc9ff!2sBloodBond%20Blood%20Bank!5e0!3m2!1sen!2s!4v1646997748000!5m2!1sen!2s"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.8354345093666!2d144.95373531590413!3d-37.81627974202102!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11fd81%3A0xf4c34d27541dc9ff!2sBloodConnection%20Blood%20Bank!5e0!3m2!1sen!2s!4v1646997748000!5m2!1sen!2s"
                         allowFullScreen=""
                         loading="lazy"
                     ></iframe>
@@ -208,12 +219,12 @@ const Contact = () => {
 
             {/* Call to Action */}
             <motion.div
-                className="text-center mt-16 py-12 bg-gray-100"
+                className="text-center mt-16 py-12 bg-gray-100 bg-gradient-to-r from-[#ffe6e6] via-[#f8f8f8] to-[#e0f7f5] rounded-xl"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6 }}
             >
-                <h2 className="text-3xl font-bold mb-4">
+                <h2 className="text-3xl font-bold mb-4 ">
                     We Are Here to Help!
                 </h2>
                 <p className="mb-6">

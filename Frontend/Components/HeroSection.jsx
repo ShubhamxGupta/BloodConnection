@@ -15,7 +15,7 @@ const HeroSection = () => {
                     transition={{ duration: 1 }}
                 >
                     <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                        Donate Blood,{" "}
+                        Donate Blood, <br />
                         <span className="text-[#fc4848]">Save Lives</span>
                     </h1>
                     <p className="mt-4 text-lg text-gray-600">
@@ -28,7 +28,7 @@ const HeroSection = () => {
                     <div className="mt-4 flex flex-col sm:flex-row gap-4">
                         <Link
                             to="/login"
-                            aria-label="Login to your BloodBond account"
+                            aria-label="Login to your BloodConnection account"
                             className="flex items-center bg-[#fc4848] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#e03e3e] transition"
                         >
                             <LogIn className="mr-2" /> Login
