@@ -31,7 +31,7 @@ const Footer = () => {
                         className="flex items-center text-2xl font-bold"
                     >
                         <HeartPulse className="mr-2 text-[#fb4673]" />
-                        <span className="text-[#28bca9]">BloodBond</span>
+                        <span className="text-[#28bca9]">BloodConnection</span>
                     </Link>
                     <p className="mt-4 text-gray-300">
                         Saving lives through blood & organ donation. Join us and
@@ -77,12 +77,11 @@ const Footer = () => {
                             support@bloodconnection.com
                         </p>
                         <p className="flex items-center">
-                            <Phone className="mr-2 text-[#fb4673]" /> +1 234 567
-                            890
+                            <Phone className="mr-2 text-[#fb4673]" /> +91 1234567890
                         </p>
                         <p className="flex items-center">
                             <MapPin className="mr-2 text-[#fb4673]" /> 123
-                            Donation Street, NY
+                            Donation Street, Chennai, TN
                         </p>
                     </div>
                 </div>
@@ -93,7 +92,7 @@ const Footer = () => {
                 {/* Social Media Links */}
                 <div className="flex justify-center space-x-6">
                     <a
-                        href="https://facebook.com"
+                        href="https://facebook.com/bloodconnection_bob"
                         aria-label="Visit our Facebook"
                         target="_blank"
                         rel="noopener noreferrer"
@@ -104,7 +103,7 @@ const Footer = () => {
                         />
                     </a>
                     <a
-                        href="https://twitter.com"
+                        href="https://twitter.com/bloodconnection_bob"
                         aria-label="Visit our Twitter"
                         target="_blank"
                         rel="noopener noreferrer"
@@ -115,7 +114,7 @@ const Footer = () => {
                         />
                     </a>
                     <a
-                        href="https://instagram.com"
+                        href="https://instagram.com/bloodconnection_bob"
                         aria-label="Visit our Instagram"
                         target="_blank"
                         rel="noopener noreferrer"
@@ -126,7 +125,7 @@ const Footer = () => {
                         />
                     </a>
                     <a
-                        href="https://linkedin.com"
+                        href="https://linkedin.com/bloodconnection_bob"
                         aria-label="Visit our Linkedin"
                         target="_blank"
                         rel="noopener noreferrer"
@@ -140,9 +139,12 @@ const Footer = () => {
 
                 {/* Newsletter Subscription */}
                 <div className="mt-6">
-                    <h3 className="text-lg font-semibold text-[#28bca9]">
-                        Subscribe for Updates
-                    </h3>
+                    <h2 className="text-lg font-semibold text-[#28bca9]">
+                        Get Updates & Emergency Alerts
+                    </h2>
+                    <p className="text-sm text-gray-200 mt-1">
+                        Stay informed with the latest news, articles, and urgent blood donation alerts.
+                    </p>
                     <form
                         onSubmit={handleSubscribe}
                         className="mt-3 flex justify-center"
@@ -150,23 +152,24 @@ const Footer = () => {
                         <input
                             type="email"
                             name="email"
-                            aria-label="Email for newsletter"
+                            aria-label="Email for news and emergency alerts"
                             placeholder="Enter your email"
                             className="px-4 py-2 w-64 rounded-l-md focus:outline-none bg-white text-black"
                         />
                         <button
                             type="submit"
-                            aria-label="Subscribe to newsletter"
+                            aria-label="Subscribe to news and emergency alerts"
                             className="bg-[#fb4673] hover:bg-[#28bca9] px-4 py-2 rounded-r-md cursor-pointer"
                         >
                             Subscribe
                         </button>
                     </form>
                 </div>
+                <br />
 
                 {/* Copyright */}
                 <p className="mt-6 text-gray-400">
-                    &copy; {new Date().getFullYear()} BloodBond. All Rights
+                    &copy; {new Date().getFullYear()} BloodConnection. All Rights
                     Reserved.
                 </p>
             </div>
