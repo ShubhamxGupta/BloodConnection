@@ -54,5 +54,6 @@
 
 ## Contact
 
-Developed by Shubham Gupta, Abhay Tiwari, Prayasha Nanda and Mohita.  
+Developed by Shubham Gupta, Abhay Tiwari, Prayasha Nanda and Mohita.
+
 Feel free to reach out via GitHub or email.
