@@ -1,8 +1,17 @@
 const mongoose = require("mongoose");
 
 const hospitalSchema = new mongoose.Schema({
-    email: { type: String, required: true, unique: true },
-    phone: { type: String, required: true },
+    email: { type: String, required: true, unique: true, lowercase: true },
+    phone: {
+        type: String,
+        required: true,
+        validate: {
+            validator: function (v) {
+                return /^\d{10,15}$/.test(v); // 10-15 digits
+            },
+            message: (props) => `${props.value} is not a valid phone number!`,
+        },
+    },
     password: { type: String, required: true },
     hospitalName: { type: String, required: true },
     registrationNumber: { type: String, required: true },
@@ -23,12 +32,12 @@ const hospitalSchema = new mongoose.Schema({
     reviews: [
         {
             userName: String,
-            rating: Number,
+            rating: { type: Number, min: 1, max: 5 },
             comment: String,
             date: { type: Date, default: Date.now },
         },
     ],
-});
+}, { timestamps: true });
 
 const Hospital = mongoose.model("Hospital", hospitalSchema);
 

@@ -8,6 +8,12 @@ const emergencyRequestSchema = new mongoose.Schema({
     phone: {
         type: String,
         required: true,
+        validate: {
+            validator: function (v) {
+                return /^\d{10,15}$/.test(v); // 10-15 digits
+            },
+            message: (props) => `${props.value} is not a valid phone number!`,
+        },
     },
     bloodGroup: {
         type: String,
@@ -20,7 +26,7 @@ const emergencyRequestSchema = new mongoose.Schema({
         min: 1,
     },
     hospital: {
-        type: String,
+        type: String, // Consider ObjectId ref if referencing Hospital
     },
     location: {
         city: { type: String, required: true },

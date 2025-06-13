@@ -5,6 +5,16 @@ const bloodRequestSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    patientPhone: {
+        type: String,
+        required: false,
+        validate: {
+            validator: function (v) {
+                return !v || /^\d{10,15}$/.test(v); // Optional, but if present, must be 10-15 digits
+            },
+            message: (props) => `${props.value} is not a valid phone number!`,
+        },
+    },
     bloodGroup: {
         type: String,
         required: true,
@@ -28,7 +38,8 @@ const bloodRequestSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
+        expires: 86400, // Auto-delete after 24 hours (optional)
     },
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("BloodRequest", bloodRequestSchema);
