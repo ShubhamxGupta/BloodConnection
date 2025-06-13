@@ -7,6 +7,7 @@ const userRoutes = require("./routes/userRoutes.js");
 const hospitalRoutes = require("./routes/hospitalRoutes.js");
 const emergencyRoutes = require("./routes/emergencyRoutes");
 const chatbotRoutes = require("./routes/chatbotRoutes");
+const donorRoutes = require("./routes/donorRoutes");
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/hospitals", hospitalRoutes);
 app.use("/api/emergency", emergencyRoutes);
 app.use("/api/chatbot", chatbotRoutes);
+app.use("/api/donate", donorRoutes);
 
 // MongoDB Connection
 mongoose

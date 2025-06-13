@@ -19,33 +19,40 @@ const Donate = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Basic validation
-        if (
-            !form.name ||
-            !form.email ||
-            !form.phone ||
-            !form.bloodGroup ||
-            !form.city ||
-            !form.state
-        ) {
+        if (!form.name || !form.email || !form.phone || !form.bloodGroup || !form.city || !form.state) {
             toast.error("Please fill in all fields.");
             return;
         }
         setSubmitting(true);
-        // Simulate API call
-        setTimeout(() => {
-            setSubmitting(false);
-            toast.success("Thank you for registering as a donor!");
-            setForm({
-                name: "",
-                email: "",
-                phone: "",
-                bloodGroup: "",
-                city: "",
-                state: "",
+        try {
+            const res = await fetch("http://localhost:5000/api/donate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(form)
             });
-        }, 1200);
+    
+            const data = await res.json();
+            if (res.ok) {
+                toast.success(data.message || "Registered successfully!");
+                setForm({
+                    name: "",
+                    email: "",
+                    phone: "",
+                    bloodGroup: "",
+                    city: "",
+                    state: "",
+                });
+            } else {
+                toast.error(data.error || "Something went wrong");
+            }
+        } catch (err) {
+            toast.error("Network error");
+        }
+        setSubmitting(false);
     };
+    
 
     return (
         <section className="min-h-screen flex flex-col items-center justify-center bg-white py-12 px-4">
