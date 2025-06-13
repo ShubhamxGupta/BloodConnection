@@ -27,19 +27,17 @@
 
 1. Clone the repository:
 
-   \`\`\`bash
-   git clone https://github.com/ShubhamxGupta/BloodConnection.git
-   cd BloodConnection
-   \`\`\`
+<pre> ```bash git clone https://github.com/ShubhamxGupta/BloodConnection.git <br/> cd BloodConnection ``` </pre>
 
 2. Install dependencies for frontend and backend:
-
+<pre>
    \`\`\`bash
    cd Frontend
    npm install
    cd ../Backend
    npm install
    \`\`\`
+   </pre>
 
 ### Running Locally
 
