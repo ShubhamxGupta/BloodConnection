@@ -1,396 +1,528 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-    Clock,
     CheckCircle,
-    AlertCircle,
+    Clock,
     Phone,
-    Hospital,
+    AlertTriangle,
     Heart,
+    Activity,
+    Users,
     ArrowRight,
+    Copy,
 } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 const EmergencySuccess = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutes in seconds
-    const {
-        bloodGroup,
-        location: userLocation,
-        requestId,
-    } = location.state || {};
+    const [timeRemaining, setTimeRemaining] = useState(15 * 60); // 15 minutes in seconds
+    const [requestStatus, setRequestStatus] = useState("processing");
 
+    const requestData = useMemo(
+        () =>
+            location.state || {
+                requestId: "ER" + Date.now(),
+                estimatedTime: "15-20 minutes",
+                bloodGroup: "O+",
+                patientName: "Patient",
+            },
+        [location.state]
+    );
+
+    // Countdown timer with useCallback to prevent re-renders
     useEffect(() => {
         const timer = setInterval(() => {
-            setTimeLeft((prevTime) => {
-                if (prevTime <= 1) {
+            setTimeRemaining((prev) => {
+                if (prev <= 0) {
                     clearInterval(timer);
-                    navigate("/");
                     return 0;
                 }
-                return prevTime - 1;
+                return prev - 1;
             });
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [navigate]);
+    }, []);
 
-    const formatTime = (seconds) => {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
-    };
+    // Simulate status updates with useCallback
+    useEffect(() => {
+        const statusUpdates = [
+            { status: "processing", delay: 0 },
+            { status: "hospitals_notified", delay: 30000 }, // 30 seconds
+            { status: "responses_received", delay: 120000 }, // 2 minutes
+            { status: "match_found", delay: 300000 }, // 5 minutes
+        ];
 
-    const AnimatedSection = ({ children, delay = 0 }) => {
-        const ref = useRef(null);
-        const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-        return (
-            <motion.div
-                ref={ref}
-                initial={{ opacity: 0, y: 50 }}
-                animate={
-                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }
+        const timers = statusUpdates.map(({ status, delay }) =>
+            setTimeout(() => {
+                setRequestStatus(status);
+                if (status === "match_found") {
+                    toast.success(
+                        "Blood match found! Hospital will contact you shortly."
+                    );
                 }
-                transition={{ duration: 0.8, delay, ease: "easeOut" }}
-            >
-                {children}
-            </motion.div>
+            }, delay)
         );
-    };
 
-    const steps = [
-        {
-            icon: CheckCircle,
-            title: "Request Submitted",
-            description:
-                "Your emergency request has been sent to all nearby hospitals",
-            status: "completed",
-        },
-        {
-            icon: Hospital,
-            title: "Hospitals Notified",
-            description: "Medical facilities are checking blood availability",
-            status: "in-progress",
-        },
-        {
-            icon: Phone,
-            title: "Contact Incoming",
-            description: "Hospitals will call you within 30 minutes",
-            status: "pending",
-        },
-        {
-            icon: Heart,
-            title: "Blood Arranged",
-            description: "Coordinate with the hospital that contacts you",
-            status: "pending",
-        },
-    ];
+        return () => timers.forEach((timer) => clearTimeout(timer));
+    }, []);
+
+    const formatTime = useCallback((seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, "0")}:${secs
+            .toString()
+            .padStart(2, "0")}`;
+    }, []);
+
+    const copyRequestId = useCallback(() => {
+        navigator.clipboard.writeText(requestData.requestId);
+        toast.success("Request ID copied to clipboard!");
+    }, [requestData.requestId]);
+
+    const getStatusInfo = useCallback(() => {
+        switch (requestStatus) {
+            case "processing":
+                return {
+                    title: "Processing Request",
+                    description: "Your emergency request is being processed...",
+                    color: "text-blue-600",
+                    bgColor: "bg-blue-50",
+                    borderColor: "border-blue-200",
+                };
+            case "hospitals_notified":
+                return {
+                    title: "Hospitals Notified",
+                    description:
+                        "Nearby hospitals have been notified of your request",
+                    color: "text-orange-600",
+                    bgColor: "bg-orange-50",
+                    borderColor: "border-orange-200",
+                };
+            case "responses_received":
+                return {
+                    title: "Responses Received",
+                    description: "Hospitals are checking blood availability",
+                    color: "text-purple-600",
+                    bgColor: "bg-purple-50",
+                    borderColor: "border-purple-200",
+                };
+            case "match_found":
+                return {
+                    title: "Match Found!",
+                    description:
+                        "Blood match found! Hospital will contact you shortly",
+                    color: "text-green-600",
+                    bgColor: "bg-green-50",
+                    borderColor: "border-green-200",
+                };
+            default:
+                return {
+                    title: "Processing",
+                    description: "Processing your request...",
+                    color: "text-gray-600",
+                    bgColor: "bg-gray-50",
+                    borderColor: "border-gray-200",
+                };
+        }
+    }, [requestStatus]);
+
+    const statusInfo = useMemo(() => getStatusInfo(), [getStatusInfo]);
+
+    const processSteps = useMemo(
+        () => [
+            {
+                step: 1,
+                title: "Request Received",
+                description: "Your emergency request has been logged",
+                status: "completed",
+                icon: CheckCircle,
+            },
+            {
+                step: 2,
+                title: "Hospitals Notified",
+                description: "Nearby hospitals are being contacted",
+                status: requestStatus === "processing" ? "active" : "completed",
+                icon: Users,
+            },
+            {
+                step: 3,
+                title: "Blood Availability Check",
+                description: "Hospitals checking blood inventory",
+                status: ["responses_received", "match_found"].includes(
+                    requestStatus
+                )
+                    ? "completed"
+                    : requestStatus === "hospitals_notified"
+                    ? "active"
+                    : "pending",
+                icon: Heart,
+            },
+            {
+                step: 4,
+                title: "Hospital Contact",
+                description: "Hospital will contact you directly",
+                status:
+                    requestStatus === "match_found" ? "completed" : "pending",
+                icon: Phone,
+            },
+        ],
+        [requestStatus]
+    );
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900 overflow-hidden">
-            {/* Animated Background */}
-            <div className="absolute inset-0">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(16,185,129,0.4),transparent_50%)]" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(5,150,105,0.3),transparent_50%)]" />
-            </div>
-
-            {/* Floating Particles */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {[...Array(20)].map((_, i) => (
+        <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-8 px-4">
+            {/* Success Header */}
+            <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="max-w-4xl mx-auto mb-8"
+            >
+                <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-8 text-white shadow-2xl text-center">
                     <motion.div
-                        key={i}
-                        className="absolute w-2 h-2 bg-emerald-400/30 rounded-full"
-                        style={{
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                        }}
-                        animate={{
-                            y: [-20, -100, -20],
-                            opacity: [0, 1, 0],
-                        }}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
                         transition={{
-                            duration: 3 + Math.random() * 2,
-                            repeat: Number.POSITIVE_INFINITY,
-                            delay: Math.random() * 2,
+                            delay: 0.3,
+                            type: "spring",
+                            stiffness: 200,
                         }}
-                    />
-                ))}
-            </div>
+                        className="mb-6"
+                    >
+                        <CheckCircle
+                            size={80}
+                            className="mx-auto text-green-200"
+                        />
+                    </motion.div>
 
-            <div className="relative z-10 pt-32 pb-20">
-                {/* Success Header */}
-                <AnimatedSection>
-                    <div className="text-center px-6 max-w-4xl mx-auto mb-20">
-                        <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{
-                                type: "spring",
-                                stiffness: 200,
-                                damping: 20,
-                                delay: 0.2,
-                            }}
-                            className="w-24 h-24 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl"
-                        >
-                            <CheckCircle className="w-12 h-12 text-white" />
-                        </motion.div>
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                        className="text-4xl font-bold mb-4"
+                    >
+                        Emergency Request Submitted!
+                    </motion.h1>
 
-                        <h1 className="text-6xl md:text-8xl font-bold mb-8">
-                            <span className="bg-gradient-to-r from-white via-emerald-200 to-white bg-clip-text text-transparent">
-                                Request
-                            </span>
-                            <br />
-                            <motion.span
-                                className="bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600 bg-clip-text text-transparent"
-                                animate={{
-                                    backgroundPosition: [
-                                        "0% 50%",
-                                        "100% 50%",
-                                        "0% 50%",
-                                    ],
-                                }}
-                                transition={{
-                                    duration: 3,
-                                    repeat: Number.POSITIVE_INFINITY,
-                                }}
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.7 }}
+                        className="text-xl text-green-100"
+                    >
+                        Request for {requestData.bloodGroup} blood for{" "}
+                        {requestData.patientName} is being processed
+                    </motion.p>
+                </div>
+            </motion.div>
+
+            <div className="max-w-6xl mx-auto grid lg:grid-cols-3 gap-8">
+                {/* Request Details & Timer */}
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.8 }}
+                    className="lg:col-span-1 space-y-6"
+                >
+                    {/* Countdown Timer */}
+                    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-green-100">
+                        <div className="text-center">
+                            <Clock
+                                size={32}
+                                className="mx-auto text-green-600 mb-4"
+                            />
+                            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                                Expected Response Time
+                            </h3>
+                            <motion.div
+                                key={timeRemaining}
+                                initial={{ scale: 1.1 }}
+                                animate={{ scale: 1 }}
+                                className="text-4xl font-bold text-green-600 mb-2"
                             >
-                                Submitted
-                            </motion.span>
-                        </h1>
-
-                        <p className="text-xl text-white/80 leading-relaxed max-w-3xl mx-auto">
-                            Your emergency blood request for{" "}
-                            <span className="font-bold text-red-400">
-                                {bloodGroup}
-                            </span>{" "}
-                            blood in{" "}
-                            <span className="font-bold text-emerald-400">
-                                {userLocation?.city}
-                            </span>{" "}
-                            has been successfully submitted.
-                        </p>
-
-                        {requestId && (
-                            <div className="mt-6 inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-                                <span className="text-white/70 text-sm">
-                                    Request ID:{" "}
-                                </span>
-                                <span className="text-white font-mono ml-2">
-                                    {requestId}
-                                </span>
-                            </div>
-                        )}
+                                {formatTime(timeRemaining)}
+                            </motion.div>
+                            <p className="text-gray-600 text-sm">
+                                Hospital will contact you within this time
+                            </p>
+                        </div>
                     </div>
-                </AnimatedSection>
 
-                {/* Countdown Timer */}
-                <AnimatedSection delay={0.2}>
-                    <div className="max-w-2xl mx-auto px-6 mb-12">
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ duration: 0.8 }}
-                            className="bg-white/10 backdrop-blur-xl border border-emerald-400/30 rounded-3xl p-8 text-center shadow-2xl"
-                        >
-                            <div className="flex items-center justify-center mb-6">
-                                <motion.div
-                                    animate={{ rotate: 360 }}
-                                    transition={{
-                                        duration: 60,
-                                        repeat: Number.POSITIVE_INFINITY,
-                                        ease: "linear",
-                                    }}
-                                    className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-4"
-                                >
-                                    <Clock className="w-8 h-8 text-white" />
-                                </motion.div>
-                                <div>
-                                    <motion.div
-                                        key={timeLeft}
-                                        initial={{ scale: 1.1 }}
-                                        animate={{ scale: 1 }}
-                                        className="text-4xl font-bold text-white"
+                    {/* Request ID */}
+                    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-blue-100">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                            Request Details
+                        </h3>
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                                <span className="text-gray-600">
+                                    Request ID:
+                                </span>
+                                <div className="flex items-center">
+                                    <span className="font-mono font-bold text-blue-600">
+                                        {requestData.requestId}
+                                    </span>
+                                    <button
+                                        onClick={copyRequestId}
+                                        className="ml-2 p-1 hover:bg-gray-100 rounded"
+                                        title="Copy Request ID"
                                     >
-                                        {formatTime(timeLeft)}
-                                    </motion.div>
-                                    <p className="text-white/70">
-                                        Expected Response Time
-                                    </p>
+                                        <Copy
+                                            size={16}
+                                            className="text-gray-500"
+                                        />
+                                    </button>
                                 </div>
                             </div>
-                            <p className="text-white/80 text-lg">
-                                Hospitals will contact you within this
-                                timeframe. Please keep your phone available.
-                            </p>
-                        </motion.div>
-                    </div>
-                </AnimatedSection>
-
-                {/* Process Steps */}
-                <AnimatedSection delay={0.4}>
-                    <div className="max-w-4xl mx-auto px-6 mb-12">
-                        <h2 className="text-3xl font-bold text-white text-center mb-12">
-                            What Happens Next?
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {steps.map((step, index) => (
-                                <motion.div
-                                    key={index}
-                                    initial={{ opacity: 0, y: 50 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{
-                                        duration: 0.6,
-                                        delay: index * 0.1,
-                                    }}
-                                    whileHover={{ scale: 1.05 }}
-                                    className={`bg-white/10 backdrop-blur-xl border rounded-3xl p-6 text-center transition-all duration-500 ${
-                                        step.status === "completed"
-                                            ? "border-emerald-400/50 bg-emerald-500/20"
-                                            : step.status === "in-progress"
-                                            ? "border-blue-400/50 bg-blue-500/20"
-                                            : "border-white/20"
-                                    }`}
+                            <div className="flex items-center justify-between">
+                                <span className="text-gray-600">
+                                    Blood Type:
+                                </span>
+                                <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium">
+                                    {requestData.bloodGroup}
+                                </span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-gray-600">Priority:</span>
+                                <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium">
+                                    Emergency
+                                </span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-gray-600">Status:</span>
+                                <span
+                                    className={`px-2 py-1 ${statusInfo.bgColor} ${statusInfo.color} rounded-full text-sm font-medium`}
                                 >
+                                    {statusInfo.title}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Emergency Stats */}
+                    <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-2xl p-6 shadow-xl border border-red-200">
+                        <h3 className="text-lg font-semibold text-red-800 mb-4 flex items-center">
+                            <Activity className="mr-2" size={20} />
+                            Live Statistics
+                        </h3>
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                                <span className="text-red-700">
+                                    Active Requests
+                                </span>
+                                <span className="font-bold text-red-800">
+                                    12
+                                </span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-red-700">
+                                    Hospitals Notified
+                                </span>
+                                <span className="font-bold text-red-800">
+                                    8
+                                </span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-red-700">
+                                    Success Rate
+                                </span>
+                                <span className="font-bold text-green-600">
+                                    94%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </motion.div>
+
+                {/* Process Steps & Instructions */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1 }}
+                    className="lg:col-span-2 space-y-6"
+                >
+                    {/* Current Status */}
+                    <div
+                        className={`${statusInfo.bgColor} ${statusInfo.borderColor} border-2 rounded-2xl p-6 shadow-xl`}
+                    >
+                        <div className="flex items-center mb-4">
+                            <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{
+                                    duration: 2,
+                                    repeat: Number.POSITIVE_INFINITY,
+                                    ease: "linear",
+                                }}
+                                className={`p-3 ${statusInfo.bgColor} rounded-full mr-4`}
+                            >
+                                <Activity
+                                    className={`${statusInfo.color}`}
+                                    size={24}
+                                />
+                            </motion.div>
+                            <div>
+                                <h3
+                                    className={`text-xl font-bold ${statusInfo.color}`}
+                                >
+                                    {statusInfo.title}
+                                </h3>
+                                <p className={`${statusInfo.color} opacity-80`}>
+                                    {statusInfo.description}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Process Steps */}
+                    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-gray-100">
+                        <h3 className="text-xl font-semibold text-gray-800 mb-6">
+                            Emergency Process Steps
+                        </h3>
+
+                        <div className="space-y-4">
+                            {processSteps.map((item, index) => {
+                                const Icon = item.icon;
+                                return (
                                     <motion.div
-                                        animate={
-                                            step.status === "in-progress"
-                                                ? { rotate: 360 }
-                                                : step.status === "completed"
-                                                ? { scale: [1, 1.1, 1] }
-                                                : {}
-                                        }
-                                        transition={
-                                            step.status === "in-progress"
-                                                ? {
-                                                      duration: 2,
-                                                      repeat: Number.POSITIVE_INFINITY,
-                                                      ease: "linear",
-                                                  }
-                                                : step.status === "completed"
-                                                ? {
-                                                      duration: 2,
-                                                      repeat: Number.POSITIVE_INFINITY,
-                                                  }
-                                                : {}
-                                        }
-                                        className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg ${
-                                            step.status === "completed"
-                                                ? "bg-gradient-to-r from-emerald-500 to-emerald-600"
-                                                : step.status === "in-progress"
-                                                ? "bg-gradient-to-r from-blue-500 to-blue-600"
-                                                : "bg-gradient-to-r from-gray-500 to-gray-600"
+                                        key={index}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{
+                                            delay: 1.2 + index * 0.1,
+                                        }}
+                                        className={`flex items-center p-4 rounded-xl border-2 ${
+                                            item.status === "completed"
+                                                ? "bg-green-50 border-green-200"
+                                                : item.status === "active"
+                                                ? "bg-blue-50 border-blue-200"
+                                                : "bg-gray-50 border-gray-200"
                                         }`}
                                     >
-                                        <step.icon className="w-8 h-8 text-white" />
+                                        <div
+                                            className={`p-3 rounded-full mr-4 ${
+                                                item.status === "completed"
+                                                    ? "bg-green-100"
+                                                    : item.status === "active"
+                                                    ? "bg-blue-100"
+                                                    : "bg-gray-100"
+                                            }`}
+                                        >
+                                            <Icon
+                                                size={20}
+                                                className={
+                                                    item.status === "completed"
+                                                        ? "text-green-600"
+                                                        : item.status ===
+                                                          "active"
+                                                        ? "text-blue-600"
+                                                        : "text-gray-400"
+                                                }
+                                            />
+                                        </div>
+                                        <div className="flex-1">
+                                            <h4
+                                                className={`font-semibold ${
+                                                    item.status === "completed"
+                                                        ? "text-green-800"
+                                                        : item.status ===
+                                                          "active"
+                                                        ? "text-blue-800"
+                                                        : "text-gray-600"
+                                                }`}
+                                            >
+                                                Step {item.step}: {item.title}
+                                            </h4>
+                                            <p
+                                                className={`text-sm ${
+                                                    item.status === "completed"
+                                                        ? "text-green-600"
+                                                        : item.status ===
+                                                          "active"
+                                                        ? "text-blue-600"
+                                                        : "text-gray-500"
+                                                }`}
+                                            >
+                                                {item.description}
+                                            </p>
+                                        </div>
+                                        {item.status === "active" && (
+                                            <motion.div
+                                                animate={{ rotate: 360 }}
+                                                transition={{
+                                                    duration: 2,
+                                                    repeat: Number.POSITIVE_INFINITY,
+                                                    ease: "linear",
+                                                }}
+                                                className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full"
+                                            />
+                                        )}
                                     </motion.div>
-                                    <h3 className="text-lg font-bold text-white mb-2">
-                                        {step.title}
-                                    </h3>
-                                    <p className="text-white/70 text-sm">
-                                        {step.description}
-                                    </p>
-                                </motion.div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
-                </AnimatedSection>
 
-                {/* Important Information */}
-                <AnimatedSection delay={0.6}>
-                    <div className="max-w-4xl mx-auto px-6 mb-12">
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            whileInView={{ scale: 1, opacity: 1 }}
-                            transition={{ duration: 0.8 }}
-                            className="bg-blue-500/20 backdrop-blur-xl border border-blue-400/30 rounded-3xl p-8"
-                        >
-                            <div className="flex items-start">
-                                <AlertCircle className="w-8 h-8 text-blue-400 mr-4 mt-1 flex-shrink-0" />
-                                <div>
-                                    <h3 className="text-2xl font-bold text-white mb-4">
-                                        Important Instructions
-                                    </h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <h4 className="text-lg font-semibold text-white mb-2">
-                                                While You Wait:
-                                            </h4>
-                                            <ul className="text-white/80 space-y-2">
-                                                <li className="flex items-center">
-                                                    <CheckCircle className="w-4 h-4 text-emerald-400 mr-2" />
-                                                    Keep your phone charged and
-                                                    available
-                                                </li>
-                                                <li className="flex items-center">
-                                                    <CheckCircle className="w-4 h-4 text-emerald-400 mr-2" />
-                                                    Have patient ID and medical
-                                                    records ready
-                                                </li>
-                                                <li className="flex items-center">
-                                                    <CheckCircle className="w-4 h-4 text-emerald-400 mr-2" />
-                                                    Stay near the patient or
-                                                    hospital
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div>
-                                            <h4 className="text-lg font-semibold text-white mb-2">
-                                                When Hospitals Call:
-                                            </h4>
-                                            <ul className="text-white/80 space-y-2">
-                                                <li className="flex items-center">
-                                                    <CheckCircle className="w-4 h-4 text-emerald-400 mr-2" />
-                                                    Confirm blood type and units
-                                                    needed
-                                                </li>
-                                                <li className="flex items-center">
-                                                    <CheckCircle className="w-4 h-4 text-emerald-400 mr-2" />
-                                                    Ask about availability and
-                                                    timing
-                                                </li>
-                                                <li className="flex items-center">
-                                                    <CheckCircle className="w-4 h-4 text-emerald-400 mr-2" />
-                                                    Get directions to the
-                                                    hospital
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                    {/* Important Instructions */}
+                    <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl p-6 shadow-xl border border-yellow-200">
+                        <div className="flex items-start mb-4">
+                            <AlertTriangle
+                                size={24}
+                                className="text-yellow-600 mr-3 mt-1"
+                            />
+                            <div>
+                                <h3 className="text-xl font-semibold text-yellow-800 mb-2">
+                                    Important Instructions
+                                </h3>
+                                <div className="space-y-2 text-yellow-700">
+                                    <p>
+                                        • Keep your phone available - hospital
+                                        will call you directly
+                                    </p>
+                                    <p>
+                                        • Have your Request ID ready:{" "}
+                                        <strong>{requestData.requestId}</strong>
+                                    </p>
+                                    <p>
+                                        • Prepare necessary documents (ID,
+                                        medical records)
+                                    </p>
+                                    <p>
+                                        • If no response in 20 minutes, call our
+                                        emergency helpline
+                                    </p>
                                 </div>
                             </div>
-                        </motion.div>
-                    </div>
-                </AnimatedSection>
-
-                {/* Action Buttons */}
-                <AnimatedSection delay={0.8}>
-                    <div className="text-center px-6">
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => navigate("/")}
-                                className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition-all duration-300 flex items-center justify-center"
-                            >
-                                <ArrowRight className="w-5 h-5 mr-2" />
-                                Go to Homepage
-                            </motion.button>
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => navigate("/emergency")}
-                                className="flex-1 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/20 transition-all duration-300 flex items-center justify-center"
-                            >
-                                <AlertCircle className="w-5 h-5 mr-2" />
-                                New Request
-                            </motion.button>
                         </div>
                     </div>
-                </AnimatedSection>
+
+                    {/* Action Buttons */}
+                    <div className="grid md:grid-cols-2 gap-4">
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => navigate("/dashboard")}
+                            className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold shadow-lg hover:bg-blue-700 transition-colors"
+                        >
+                            <ArrowRight size={20} className="mr-2" />
+                            Go to Dashboard
+                        </motion.button>
+
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => window.open("tel:+1234567890")}
+                            className="flex items-center justify-center px-6 py-3 bg-red-600 text-white rounded-xl font-semibold shadow-lg hover:bg-red-700 transition-colors"
+                        >
+                            <Phone size={20} className="mr-2" />
+                            Emergency Helpline
+                        </motion.button>
+                    </div>
+                </motion.div>
             </div>
         </div>
     );

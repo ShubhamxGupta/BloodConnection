@@ -20,6 +20,7 @@ import { Toaster } from "react-hot-toast";
 import EmergencySuccess from "../Pages/EmergencySuccess";
 import Donate from "../Pages/Donate";
 import FindDonor from "../Pages/FindDonor";
+import Requests from "../Pages/Requests";
 
 // Simple 404 page
 const NotFound = () => (
@@ -84,6 +85,7 @@ const App = () => {
                     <Route path="/donate" element={<Donate />} />
                     <Route path="/find-donor" element={<FindDonor />} />
                     <Route path="/hospital/:id" element={<HospitalPage />} />
+                    <Route path="/requests" element={<Requests />} />
                     <Route path="/emergency" element={<EmergencyRequest />} />
                     <Route
                         path="/emergency/success"
