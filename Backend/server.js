@@ -8,6 +8,7 @@ const hospitalRoutes = require("./routes/hospitalRoutes.js");
 const emergencyRoutes = require("./routes/emergencyRoutes");
 const chatbotRoutes = require("./routes/chatbotRoutes");
 const donorRoutes = require("./routes/donorRoutes");
+const predictRoute = require('./routes/predict');
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.use("/api/emergency", emergencyRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/donate", donorRoutes);
 app.use("/api/donors", donorRoutes); 
+app.use('/api/predict', predictRoute);
 
 // MongoDB Connection
 mongoose

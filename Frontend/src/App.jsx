@@ -21,6 +21,7 @@ import EmergencySuccess from "../Pages/EmergencySuccess";
 import Donate from "../Pages/Donate";
 import FindDonor from "../Pages/FindDonor";
 import Requests from "../Pages/Requests";
+import BloodPredictor from "../Pages/BloodPredictor";
 
 // Simple 404 page
 const NotFound = () => (
@@ -92,6 +93,7 @@ const App = () => {
                         element={<EmergencySuccess />}
                     />
                     <Route path="*" element={<NotFound />} />
+                    <Route path="/blood-predictor" element={<BloodPredictor />} />
                 </Routes>
             </Layout>
         </Router>
