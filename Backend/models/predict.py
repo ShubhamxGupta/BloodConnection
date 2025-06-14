@@ -6,7 +6,7 @@ import numpy as np
 import pickle
 
 # Load trained logistic regression model
-with open("models/blood_donation_logreg.pkl", "rb") as f:
+with open("models/blood_donation_rf.pkl", "rb") as f:
     model = pickle.load(f)
 
 # Parse input JSON from Node.js
