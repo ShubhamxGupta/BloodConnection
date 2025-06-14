@@ -175,7 +175,7 @@ const EmergencySuccess = () => {
     );
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-8 px-4">
+        <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-8 px-4 mt-15">
             {/* Success Header */}
             <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
