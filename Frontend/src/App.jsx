@@ -1,4 +1,3 @@
-import React from "react";
 import {
     BrowserRouter as Router,
     Routes,
@@ -24,12 +23,19 @@ import FindDonor from "../Pages/FindDonor";
 
 // Simple 404 page
 const NotFound = () => (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-        <h1 className="text-5xl font-bold mb-4 text-red-600">404</h1>
-        <p className="text-lg mb-6">Page Not Found</p>
-        <a href="/" className="text-blue-600 underline">
-            Go Home
-        </a>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-12 max-w-md mx-auto">
+            <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">
+                404
+            </h1>
+            <p className="text-xl mb-6 text-white/80">Page Not Found</p>
+            <a
+                href="/"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300"
+            >
+                Go Home
+            </a>
+        </div>
     </div>
 );
 
@@ -40,7 +46,19 @@ const Layout = ({ children }) => {
     return (
         <div className="flex flex-col min-h-screen">
             {!hideNavFooter && <Navbar />}
-            <Toaster position="top-center" />
+            <Toaster
+                position="top-center"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: "rgba(255, 255, 255, 0.1)",
+                        backdropFilter: "blur(10px)",
+                        border: "1px solid rgba(255, 255, 255, 0.2)",
+                        borderRadius: "12px",
+                        color: "white",
+                    },
+                }}
+            />
             <main className="flex-grow">{children}</main>
             {!hideNavFooter && <Footer />}
         </div>
