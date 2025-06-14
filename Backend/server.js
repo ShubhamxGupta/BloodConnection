@@ -8,7 +8,9 @@ const hospitalRoutes = require("./routes/hospitalRoutes.js");
 const emergencyRoutes = require("./routes/emergencyRoutes");
 const chatbotRoutes = require("./routes/chatbotRoutes");
 const donorRoutes = require("./routes/donorRoutes");
+const { verifyEmailService } = require('./utils/emailService');
 const predictRoute = require('./routes/predict');
+const contactRoutes = require("./routes/contactRoutes")
 
 dotenv.config();
 
@@ -23,6 +25,8 @@ app.use(
     })
 );
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
+verifyEmailService();
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -33,6 +37,7 @@ app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/donate", donorRoutes);
 app.use("/api/donors", donorRoutes); 
 app.use('/api/predict', predictRoute);
+app.use("/api/contact", contactRoutes)
 
 // MongoDB Connection
 mongoose

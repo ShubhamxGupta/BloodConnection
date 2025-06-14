@@ -97,8 +97,10 @@ const loginUser = async (req, res) => {
                 .status(400)
                 .json({ message: "Email and password are required" });
         }
+
         email = email.toLowerCase();
         const user = await User.findOne({ email });
+
         if (!user) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
@@ -107,17 +109,28 @@ const loginUser = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
+
         checkJwtSecret();
+
         const token = jwt.sign(
             {
                 id: user._id,
                 type: "user",
-                name: user.name, // Add name to JWT token
+                name: user.name,
             },
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
         );
-        res.json({ token, userType: "user", userName: user.name }); // Send userName in response
+
+        // Convert user to object and remove password before sending
+        const { password: pw, __v, ...userDetails } = user.toObject();
+
+        res.json({
+            token,
+            userType: "user",
+            user: userDetails, // full user details (excluding password)
+        });
+
     } catch (err) {
         console.error("Login error:", err);
         res.status(500).json({
@@ -125,6 +138,7 @@ const loginUser = async (req, res) => {
         });
     }
 };
+
 
 const loginHospital = async (req, res) => {
     let { email, password } = req.body;
