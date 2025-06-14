@@ -99,7 +99,7 @@ const EmergencyRequest = () => {
                 toast.success("Emergency request submitted successfully!");
 
                 // Navigate to success page with state
-                navigate("/emergency-success", {
+                navigate("/emergency/success", {
                     state: {
                         requestId,
                         estimatedTime: "15-20 minutes",
