@@ -1,7 +1,23 @@
-import React, { useEffect, useState } from "react";
+"use client";
+
+import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { motion, useInView } from "framer-motion";
 import Chatbot from "../Components/ChatBot";
+import {
+    User,
+    MapPin,
+    Droplets,
+    Hospital,
+    Mail,
+    Star,
+    LogOut,
+    Heart,
+    Shield,
+    Users,
+    Navigation,
+} from "lucide-react";
 
 const UserDashboard = () => {
     const [hospitals, setHospitals] = useState([]);
@@ -9,7 +25,7 @@ const UserDashboard = () => {
     const [loading, setLoading] = useState({ user: true, hospitals: true });
     const [errors, setErrors] = useState({ user: null, hospitals: null });
     const [showAllHospitals, setShowAllHospitals] = useState(false);
-    const [toastShown, setToastShown] = useState(false); // Prevent multiple toasts
+    const [toastShown, setToastShown] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -88,18 +104,21 @@ const UserDashboard = () => {
         fetchHospitals();
     }, []);
 
-    // Show welcome toast only once, after user is loaded and no error
     useEffect(() => {
         if (!loading.user && user && !errors.user && !toastShown) {
             toast.success("Successfully logged in!", {
                 duration: 3000,
-                position: "top-right",
+                style: {
+                    background: "linear-gradient(135deg, #10b981, #059669)",
+                    color: "white",
+                    borderRadius: "12px",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                },
             });
             setToastShown(true);
         }
     }, [loading.user, user, errors.user, toastShown]);
 
-    // Add this function to filter hospitals
     const filteredHospitals = () => {
         if (!user || !user.location || !user.location.city) return [];
         if (showAllHospitals) return hospitals;
@@ -110,7 +129,6 @@ const UserDashboard = () => {
         );
     };
 
-    // Logout handler
     const handleLogout = async () => {
         const token = localStorage.getItem("token");
         try {
@@ -129,102 +147,286 @@ const UserDashboard = () => {
         }
     };
 
-    // Show loading spinner if either user or hospitals are loading
+    const AnimatedSection = ({ children, delay = 0 }) => {
+        const ref = useRef(null);
+        const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+        return (
+            <motion.div
+                ref={ref}
+                initial={{ opacity: 0, y: 50 }}
+                animate={
+                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }
+                }
+                transition={{ duration: 0.8, delay, ease: "easeOut" }}
+            >
+                {children}
+            </motion.div>
+        );
+    };
+
     if (loading.user || loading.hospitals) {
         return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center"
+                >
+                    <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{
+                            duration: 1,
+                            repeat: Number.POSITIVE_INFINITY,
+                            ease: "linear",
+                        }}
+                        className="w-16 h-16 border-4 border-white/20 border-t-blue-500 rounded-full mx-auto mb-4"
+                    />
+                    <p className="text-white text-xl">
+                        Loading your dashboard...
+                    </p>
+                </motion.div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#f0f9ff] via-[#e6f3ff] to-[#f0f9ff] pt-20 p-6">
-            {/* Logout button at top right */}
-            <div className="flex justify-end max-w-7xl mx-auto mb-2">
-                <button
-                    onClick={handleLogout}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow"
-                >
-                    Logout
-                </button>
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-hidden">
+            {/* Animated Background */}
+            <div className="absolute inset-0">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.3),transparent_50%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(37,99,235,0.2),transparent_50%)]" />
             </div>
 
-            {errors.user && (
-                <div className="text-center mx-auto max-w-2xl mt-4 mb-4 text-red-700 bg-red-100 p-4 rounded-lg border border-red-200">
-                    {errors.user}
-                </div>
-            )}
-            {errors.hospitals && (
-                <div className="text-center mx-auto max-w-2xl mt-4 mb-4 text-red-700 bg-red-100 p-4 rounded-lg border border-red-200">
-                    {errors.hospitals}
-                </div>
-            )}
+            {/* Floating Particles */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                {[...Array(15)].map((_, i) => (
+                    <motion.div
+                        key={i}
+                        className="absolute w-2 h-2 bg-blue-400/20 rounded-full"
+                        style={{
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                        }}
+                        animate={{
+                            y: [-20, -100, -20],
+                            opacity: [0, 1, 0],
+                        }}
+                        transition={{
+                            duration: 3 + Math.random() * 2,
+                            repeat: Number.POSITIVE_INFINITY,
+                            delay: Math.random() * 2,
+                        }}
+                    />
+                ))}
+            </div>
 
-            {user && (
-                <div className="mb-12 text-center">
-                    <h2 className="text-4xl font-bold mb-6 text-[#1e3a8a] bg-clip-text">
-                        Welcome, {user.name}!
-                    </h2>
-                    <div className="flex justify-center gap-8">
-                        <div className="px-6 py-3 bg-white rounded-lg shadow-md border border-[#e5e7eb]">
-                            <p className="text-[#1e3a8a]">
-                                Blood Group:{" "}
-                                <span className="font-semibold">
-                                    {user.bloodGroup}
-                                </span>
-                            </p>
+            <div className="relative z-10 pt-32 pb-20">
+                {/* Logout Button */}
+                <div className="absolute top-24 right-6 z-20">
+                    <motion.button
+                        onClick={handleLogout}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="flex items-center px-4 py-2 bg-red-500/20 backdrop-blur-sm border border-red-400/30 text-red-400 rounded-xl font-semibold hover:bg-red-500/30 transition-all duration-300"
+                    >
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Logout
+                    </motion.button>
+                </div>
+
+                {/* Error Messages */}
+                {(errors.user || errors.hospitals) && (
+                    <AnimatedSection>
+                        <div className="max-w-4xl mx-auto px-6 mb-8">
+                            {errors.user && (
+                                <div className="mb-4 p-4 bg-red-500/20 border border-red-400/30 rounded-2xl text-red-400">
+                                    {errors.user}
+                                </div>
+                            )}
+                            {errors.hospitals && (
+                                <div className="mb-4 p-4 bg-red-500/20 border border-red-400/30 rounded-2xl text-red-400">
+                                    {errors.hospitals}
+                                </div>
+                            )}
                         </div>
-                        <div className="px-6 py-3 bg-white rounded-lg shadow-md border border-[#e5e7eb]">
-                            <p className="text-[#1e3a8a]">
-                                Location:
-                                <span className="font-semibold">
-                                    {user?.location?.city &&
-                                    user?.location?.state
-                                        ? ` ${user.location.city}, ${user.location.state}`
-                                        : " Unknown"}
-                                </span>
-                            </p>
+                    </AnimatedSection>
+                )}
+
+                {/* User Welcome Section */}
+                {user && (
+                    <AnimatedSection>
+                        <div className="max-w-7xl mx-auto px-6 mb-12">
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ duration: 0.8 }}
+                                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                            >
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center">
+                                        <motion.div
+                                            animate={{ rotate: 360 }}
+                                            transition={{
+                                                duration: 20,
+                                                repeat: Number.POSITIVE_INFINITY,
+                                                ease: "linear",
+                                            }}
+                                            className="w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mr-6 shadow-lg"
+                                        >
+                                            <User className="w-10 h-10 text-white" />
+                                        </motion.div>
+                                        <div>
+                                            <h2 className="text-4xl font-bold text-white mb-2">
+                                                Welcome, {user.name}!
+                                            </h2>
+                                            <div className="flex items-center text-white/80">
+                                                <MapPin className="w-5 h-5 text-blue-400 mr-2" />
+                                                <span className="text-lg">
+                                                    {user?.location?.city &&
+                                                    user?.location?.state
+                                                        ? `${user.location.city}, ${user.location.state}`
+                                                        : "Location Unknown"}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="flex items-center justify-end mb-2">
+                                            <Droplets className="w-6 h-6 text-red-400 mr-2" />
+                                            <span className="text-3xl font-bold text-white">
+                                                {user.bloodGroup}
+                                            </span>
+                                        </div>
+                                        <div className="text-white/70">
+                                            Your Blood Type
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+                    </AnimatedSection>
+                )}
+
+                {/* Quick Stats */}
+                <AnimatedSection delay={0.2}>
+                    <div className="max-w-7xl mx-auto px-6 mb-12">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 text-center hover:bg-white/20 transition-all duration-500"
+                            >
+                                <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <Hospital className="w-8 h-8 text-white" />
+                                </div>
+                                <div className="text-3xl font-bold text-white mb-2">
+                                    {hospitals.length}
+                                </div>
+                                <div className="text-white/70">
+                                    Total Hospitals
+                                </div>
+                            </motion.div>
+
+                            <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 text-center hover:bg-white/20 transition-all duration-500"
+                            >
+                                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <Navigation className="w-8 h-8 text-white" />
+                                </div>
+                                <div className="text-3xl font-bold text-white mb-2">
+                                    {filteredHospitals().length}
+                                </div>
+                                <div className="text-white/70">
+                                    Nearby Hospitals
+                                </div>
+                            </motion.div>
+
+                            <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 text-center hover:bg-white/20 transition-all duration-500"
+                            >
+                                <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <Heart className="w-8 h-8 text-white" />
+                                </div>
+                                <div className="text-3xl font-bold text-white mb-2">
+                                    24/7
+                                </div>
+                                <div className="text-white/70">
+                                    Emergency Support
+                                </div>
+                            </motion.div>
                         </div>
                     </div>
+                </AnimatedSection>
+
+                {/* Hospitals Section Header */}
+                <AnimatedSection delay={0.4}>
+                    <div className="max-w-7xl mx-auto px-6 mb-8">
+                        <div className="flex flex-col sm:flex-row justify-between items-center">
+                            <h1 className="text-4xl font-bold text-white mb-4 sm:mb-0 flex items-center">
+                                <Hospital className="w-8 h-8 text-blue-400 mr-3" />
+                                {showAllHospitals
+                                    ? "All Hospitals"
+                                    : "Nearby Hospitals"}
+                            </h1>
+                            <motion.button
+                                onClick={() =>
+                                    setShowAllHospitals(!showAllHospitals)
+                                }
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition-all duration-300 flex items-center"
+                            >
+                                <Users className="w-5 h-5 mr-2" />
+                                {showAllHospitals
+                                    ? "Show Nearby Only"
+                                    : "Show All Hospitals"}
+                            </motion.button>
+                        </div>
+                    </div>
+                </AnimatedSection>
+
+                {/* Hospitals Grid */}
+                <AnimatedSection delay={0.6}>
+                    <div className="max-w-7xl mx-auto px-6">
+                        {filteredHospitals().length === 0 ? (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-12 text-center"
+                            >
+                                <div className="w-20 h-20 bg-gradient-to-r from-gray-500 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <Hospital className="w-10 h-10 text-white" />
+                                </div>
+                                <h3 className="text-2xl font-bold text-white mb-4">
+                                    No Hospitals Found
+                                </h3>
+                                <p className="text-white/70 text-lg">
+                                    {showAllHospitals
+                                        ? "No hospitals are currently available in our network."
+                                        : "No hospitals found in your city. Try viewing all hospitals."}
+                                </p>
+                            </motion.div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {filteredHospitals().map((hospital, index) => (
+                                    <HospitalCard
+                                        key={hospital._id}
+                                        hospital={hospital}
+                                        userLocation={user?.location}
+                                        index={index}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </AnimatedSection>
+
+                {/* Chatbot */}
+                <div className="fixed bottom-4 right-4 z-50">
+                    <Chatbot />
                 </div>
-            )}
-
-            <div className="flex justify-between items-center max-w-7xl mx-auto mb-6">
-                <h1 className="text-4xl font-bold text-[#1e3a8a]">
-                    {showAllHospitals ? "All Hospitals" : "Nearby Hospitals"}
-                </h1>
-                <button
-                    onClick={() => setShowAllHospitals(!showAllHospitals)}
-                    className="px-6 py-2 bg-[#1e3a8a] text-white rounded-lg hover:bg-[#2d4ba0] transition-colors"
-                >
-                    {showAllHospitals
-                        ? "Show Nearby Hospitals"
-                        : "Show All Hospitals"}
-                </button>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-                {filteredHospitals().length === 0 ? (
-                    <p className="text-center text-xl font-bold text-gray-600 col-span-full">
-                        {showAllHospitals
-                            ? "No hospitals available"
-                            : "No hospitals available in your city"}
-                    </p>
-                ) : (
-                    filteredHospitals().map((hospital) => (
-                        <HospitalCard
-                            key={hospital._id}
-                            hospital={hospital}
-                            userLocation={user?.location}
-                        />
-                    ))
-                )}
-            </div>
-
-            {/* Add Chatbot component */}
-            <div className="fixed bottom-4 right-4 z-50">
-                <Chatbot />
             </div>
         </div>
     );
@@ -250,8 +452,8 @@ const getCoordinates = async (city, state) => {
 
         if (data && data[0]) {
             const coords = {
-                lat: parseFloat(data[0].lat),
-                lng: parseFloat(data[0].lon),
+                lat: Number.parseFloat(data[0].lat),
+                lng: Number.parseFloat(data[0].lon),
             };
             coordinatesCache.set(locationKey, coords);
             return coords;
@@ -291,7 +493,7 @@ const calculateDistance = async (location1, location2) => {
     }
 };
 
-const HospitalCard = ({ hospital, userLocation }) => {
+const HospitalCard = ({ hospital, userLocation, index }) => {
     const [distance, setDistance] = useState("...");
 
     useEffect(() => {
@@ -301,118 +503,84 @@ const HospitalCard = ({ hospital, userLocation }) => {
     }, [hospital.location, userLocation]);
 
     return (
-        <Link to={`/hospital/${hospital._id}`}>
-            <div
-                className="bg-white p-6 rounded-xl border border-[#e5e7eb] 
-                     shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(29,78,216,0.15)] 
-                     transition-all duration-300 hover:translate-y-[-5px] relative overflow-hidden"
-            >
-                {/* Replace the background icon with medical plus sign */}
-                <div className="absolute top-0 right-0 w-20 h-20 opacity-10">
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="#1e3a8a"
-                        className="w-full h-full"
-                    >
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" />
-                    </svg>
-                </div>
-
-                <h2 className="text-2xl font-bold text-[#1e3a8a] mb-4 flex items-center gap-2">
-                    <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                        />
-                    </svg>
-                    {hospital.hospitalName}
-                </h2>
-
-                <div className="space-y-3">
-                    <p className="text-gray-600 flex items-center gap-2">
+        <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: index * 0.1 }}
+            whileHover={{ scale: 1.05, y: -10 }}
+        >
+            <Link to={`/hospital/${hospital._id}`}>
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 hover:bg-white/20 transition-all duration-500 shadow-2xl relative overflow-hidden">
+                    {/* Background Medical Icon */}
+                    <div className="absolute top-0 right-0 w-20 h-20 opacity-10">
                         <svg
-                            className="w-5 h-5 text-[#1e3a8a]"
-                            fill="none"
-                            stroke="currentColor"
                             viewBox="0 0 24 24"
+                            fill="#3b82f6"
+                            className="w-full h-full"
                         >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                            />
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" />
                         </svg>
-                        {hospital.location?.city}, {hospital.location?.state}
-                    </p>
-
-                    <div className="flex items-center gap-2 text-gray-600">
-                        <svg
-                            className="w-5 h-5 text-[#1e3a8a]"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                            />
-                        </svg>
-                        {hospital.email}
                     </div>
 
-                    <div className="flex items-center gap-2 text-gray-600">
-                        <svg
-                            className="w-5 h-5 text-[#1e3a8a]"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                            />
-                        </svg>
-                        Reg. No: {hospital.registrationNumber}
-                    </div>
+                    <div className="relative z-10">
+                        <div className="flex items-center mb-4">
+                            <motion.div
+                                whileHover={{ rotate: 360 }}
+                                transition={{ duration: 0.8 }}
+                                className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg"
+                            >
+                                <Hospital className="w-6 h-6 text-white" />
+                            </motion.div>
+                            <h2 className="text-2xl font-bold text-white">
+                                {hospital.hospitalName}
+                            </h2>
+                        </div>
 
-                    <div className="mt-4 flex items-center gap-2 text-sm text-gray-500">
-                        <svg
-                            className="w-4 h-4 text-[#1e3a8a]"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                            />
-                        </svg>
-                        Distance:{" "}
-                        {distance === "N/A" ? "Unknown" : `${distance} km`}
+                        <div className="space-y-3">
+                            <div className="flex items-center text-white/80">
+                                <MapPin className="w-5 h-5 text-blue-400 mr-3" />
+                                <span>
+                                    {hospital.location?.city},{" "}
+                                    {hospital.location?.state}
+                                </span>
+                            </div>
+
+                            <div className="flex items-center text-white/80">
+                                <Mail className="w-5 h-5 text-emerald-400 mr-3" />
+                                <span className="truncate">
+                                    {hospital.email}
+                                </span>
+                            </div>
+
+                            <div className="flex items-center text-white/80">
+                                <Shield className="w-5 h-5 text-purple-400 mr-3" />
+                                <span>
+                                    Reg. No: {hospital.registrationNumber}
+                                </span>
+                            </div>
+
+                            <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                                <div className="flex items-center text-white/70">
+                                    <Navigation className="w-4 h-4 text-blue-400 mr-2" />
+                                    <span className="text-sm">
+                                        Distance:{" "}
+                                        {distance === "N/A"
+                                            ? "Unknown"
+                                            : `${distance} km`}
+                                    </span>
+                                </div>
+                                <div className="flex items-center">
+                                    <Star className="w-4 h-4 text-yellow-400 mr-1" />
+                                    <span className="text-white/70 text-sm">
+                                        4.5
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </Link>
+            </Link>
+        </motion.div>
     );
 };
 
