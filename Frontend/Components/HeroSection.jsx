@@ -158,7 +158,7 @@ const EmergencyButton = memo(() => (
         className="inline-block"
     >
         <ActionButton
-            to="/emergency-success"
+            to="/emergency"
             variant="emergency"
             icon={AlertCircle}
             className="animate-pulse"
