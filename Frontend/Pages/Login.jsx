@@ -1,10 +1,21 @@
+"use client";
+
 import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Mail, Lock } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+    Mail,
+    Lock,
+    Eye,
+    EyeOff,
+    Heart,
+    Shield,
+    User,
+    Building,
+} from "lucide-react";
 import { useState } from "react";
 
 const schema = yup.object().shape({
@@ -56,8 +67,18 @@ const Login = () => {
 
             localStorage.setItem("token", result.token);
             localStorage.setItem("userType", userType);
-            localStorage.setItem("userName", result.userName); // Store userName
-            // Redirect based on user type
+            localStorage.setItem("userName", result.userName);
+
+            toast.success("Login successful!", {
+                duration: 3000,
+                style: {
+                    background: "linear-gradient(135deg, #10b981, #059669)",
+                    color: "white",
+                    borderRadius: "12px",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                },
+            });
+
             if (userType === "user") {
                 navigate("/user-dashboard");
             } else {
@@ -65,155 +86,313 @@ const Login = () => {
             }
         } catch (err) {
             console.error("Error:", err.message);
-            toast.error(err.message || "Something went wrong");
+            toast.error(err.message || "Something went wrong", {
+                duration: 4000,
+                style: {
+                    background: "linear-gradient(135deg, #ef4444, #dc2626)",
+                    color: "white",
+                    borderRadius: "12px",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                },
+            });
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <section className="flex justify-center items-center min-h-screen bg-white text-white p-6">
-            <motion.div
-                className="bg-[#223634] p-8 rounded-lg shadow-lg w-full max-w-md"
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-            >
-                <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4 overflow-hidden">
+            {/* Animated Background */}
+            <div className="absolute inset-0">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(120,119,198,0.3),transparent_50%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(255,107,107,0.2),transparent_50%)]" />
+            </div>
 
-                {/* User Type Selection */}
-                <div className="flex justify-center mb-6 space-x-4">
-                    <button
-                        type="button"
-                        onClick={() => setUserType("user")}
-                        className={`px-4 py-2 rounded-lg ${
-                            userType === "user"
-                                ? "bg-[#fb4673] text-white"
-                                : "bg-gray-200 text-gray-700"
-                        }`}
+            {/* Floating Particles */}
+            <div className="absolute inset-0 overflow-hidden">
+                {[...Array(20)].map((_, i) => (
+                    <motion.div
+                        key={i}
+                        className="absolute w-2 h-2 bg-white/20 rounded-full"
+                        style={{
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                        }}
+                        animate={{
+                            y: [-20, -100, -20],
+                            opacity: [0, 1, 0],
+                        }}
+                        transition={{
+                            duration: 3 + Math.random() * 2,
+                            repeat: Number.POSITIVE_INFINITY,
+                            delay: Math.random() * 2,
+                        }}
+                    />
+                ))}
+            </div>
+
+            <motion.div
+                initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="relative z-10 w-full max-w-md"
+            >
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
+                    {/* Header */}
+                    <div className="text-center mb-8">
+                        <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{
+                                duration: 20,
+                                repeat: Number.POSITIVE_INFINITY,
+                                ease: "linear",
+                            }}
+                            className="w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
+                        >
+                            <Heart className="w-8 h-8 text-white" />
+                        </motion.div>
+                        <h2 className="text-3xl font-bold text-white mb-2">
+                            Welcome Back
+                        </h2>
+                        <p className="text-white/70">
+                            Sign in to continue saving lives
+                        </p>
+                    </div>
+
+                    {/* User Type Selection */}
+                    <div className="flex mb-8 bg-white/5 backdrop-blur-sm rounded-2xl p-1 border border-white/10">
+                        <motion.button
+                            type="button"
+                            onClick={() => setUserType("user")}
+                            className={`flex-1 flex items-center justify-center py-3 px-4 rounded-xl font-semibold transition-all duration-300 ${
+                                userType === "user"
+                                    ? "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg"
+                                    : "text-white/70 hover:text-white"
+                            }`}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            <User className="w-4 h-4 mr-2" />
+                            User
+                        </motion.button>
+                        <motion.button
+                            type="button"
+                            onClick={() => setUserType("hospital")}
+                            className={`flex-1 flex items-center justify-center py-3 px-4 rounded-xl font-semibold transition-all duration-300 ${
+                                userType === "hospital"
+                                    ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg"
+                                    : "text-white/70 hover:text-white"
+                            }`}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            <Building className="w-4 h-4 mr-2" />
+                            Hospital
+                        </motion.button>
+                    </div>
+
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="space-y-6"
                     >
-                        User
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setUserType("hospital")}
-                        className={`px-4 py-2 rounded-lg ${
-                            userType === "hospital"
-                                ? "bg-[#fb4673] text-white"
-                                : "bg-gray-200 text-gray-700"
-                        }`}
+                        {/* Email Field */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2 }}
+                        >
+                            <label className="flex items-center text-white/90 font-medium mb-2">
+                                <Mail className="w-4 h-4 mr-2 text-red-400" />
+                                Email Address
+                            </label>
+                            <div className="relative">
+                                <input
+                                    disabled={isLoading}
+                                    autoComplete="email"
+                                    type="email"
+                                    {...register("email")}
+                                    className={`w-full p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-red-400/50 focus:bg-white/20 transition-all duration-300 ${
+                                        isLoading
+                                            ? "opacity-70 cursor-not-allowed"
+                                            : ""
+                                    }`}
+                                    placeholder="Enter your email"
+                                />
+                                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-500/0 via-red-500/0 to-red-500/0 opacity-0 hover:opacity-10 transition-opacity duration-300 pointer-events-none" />
+                            </div>
+                            <AnimatePresence>
+                                {errors.email && (
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        className="text-red-400 text-sm mt-2 flex items-center"
+                                    >
+                                        <Shield className="w-3 h-3 mr-1" />
+                                        {errors.email.message}
+                                    </motion.p>
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
+
+                        {/* Password Field */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 }}
+                        >
+                            <label className="flex items-center text-white/90 font-medium mb-2">
+                                <Lock className="w-4 h-4 mr-2 text-red-400" />
+                                Password
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    autoComplete="current-password"
+                                    disabled={isLoading}
+                                    {...register("password")}
+                                    className={`w-full p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-red-400/50 focus:bg-white/20 transition-all duration-300 pr-12 ${
+                                        isLoading
+                                            ? "opacity-70 cursor-not-allowed"
+                                            : ""
+                                    }`}
+                                    placeholder="Enter your password"
+                                />
+                                <motion.button
+                                    type="button"
+                                    onClick={() =>
+                                        setShowPassword(!showPassword)
+                                    }
+                                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 hover:text-white transition-colors"
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="w-5 h-5" />
+                                    ) : (
+                                        <Eye className="w-5 h-5" />
+                                    )}
+                                </motion.button>
+                            </div>
+                            <AnimatePresence>
+                                {errors.password && (
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        className="text-red-400 text-sm mt-2 flex items-center"
+                                    >
+                                        <Shield className="w-3 h-3 mr-1" />
+                                        {errors.password.message}
+                                    </motion.p>
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
+
+                        {/* Remember Me & Forgot Password */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.4 }}
+                            className="flex justify-between items-center"
+                        >
+                            <label className="flex items-center text-white/70 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    {...register("rememberMe")}
+                                    className="w-4 h-4 text-red-500 bg-white/10 border-white/20 rounded focus:ring-red-500 focus:ring-2 mr-2"
+                                />
+                                Remember me
+                            </label>
+                            <Link
+                                to="/forgot-password"
+                                className="text-red-400 hover:text-red-300 text-sm font-medium transition-colors"
+                            >
+                                Forgot Password?
+                            </Link>
+                        </motion.div>
+
+                        {/* Login Button */}
+                        <motion.button
+                            type="submit"
+                            disabled={isLoading}
+                            className={`w-full bg-gradient-to-r ${
+                                userType === "user"
+                                    ? "from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
+                                    : "from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                            } text-white py-4 rounded-xl font-semibold shadow-lg transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center border border-white/20`}
+                            whileHover={{ scale: isLoading ? 1 : 1.02 }}
+                            whileTap={{ scale: isLoading ? 1 : 0.98 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 }}
+                        >
+                            {isLoading ? (
+                                <>
+                                    <motion.div
+                                        animate={{ rotate: 360 }}
+                                        transition={{
+                                            duration: 1,
+                                            repeat: Number.POSITIVE_INFINITY,
+                                            ease: "linear",
+                                        }}
+                                        className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full mr-2"
+                                    />
+                                    Signing In...
+                                </>
+                            ) : (
+                                <>
+                                    <Heart className="w-5 h-5 mr-2" />
+                                    Sign In
+                                </>
+                            )}
+                        </motion.button>
+                    </form>
+
+                    {/* Signup Link */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.6 }}
+                        className="text-center mt-8"
                     >
-                        Hospital
-                    </button>
+                        <p className="text-white/70">
+                            Don't have an account?{" "}
+                            <Link
+                                to="/signup"
+                                className={`text-red-400 hover:text-red-300 font-semibold transition-colors ${
+                                    isLoading
+                                        ? "pointer-events-none opacity-70"
+                                        : ""
+                                }`}
+                            >
+                                Create Account
+                            </Link>
+                        </p>
+                    </motion.div>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    {/* Email */}
-                    <div>
-                        <label className="flex items-center text-lg">
-                            <Mail className="mr-2 text-[#fb4673]" />
-                            Email
-                        </label>
-                        <input
-                            disabled={isLoading}
-                            autoComplete="email"
-                            type="email"
-                            {...register("email")}
-                            className={`w-full p-2 mt-1 rounded-lg bg-[#1b3a4b] text-white focus:outline-none ${
-                                isLoading ? "opacity-70 cursor-not-allowed" : ""
-                            }`}
-                            placeholder="example@mail.com"
-                        />
-                        {errors.email && (
-                            <p className="text-red-500 text-sm">
-                                {errors.email.message}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Password */}
-                    <div className="relative">
-                        <label className="flex items-center text-lg">
-                            <Lock className="mr-2 text-[#fb4673]" />
-                            Password
-                        </label>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            autoComplete="current-password"
-                            disabled={isLoading}
-                            {...register("password")}
-                            className={`w-full p-2 mt-1 rounded-lg bg-[#1b3a4b] text-white focus:outline-none ${
-                                isLoading ? "opacity-70 cursor-not-allowed" : ""
-                            }`}
-                            placeholder="••••••••"
-                        />
-                        <button
-                            type="button"
-                            onClick={() => setShowPassword((prev) => !prev)}
-                            className="absolute right-3 top-9 text-sm text-[#28bca9]"
-                            aria-label={
-                                showPassword ? "Hide password" : "Show password"
-                            }
-                            tabIndex={0}
-                        >
-                            {showPassword ? "Hide" : "Show"}
-                        </button>
-                        {errors.password && (
-                            <p className="text-red-500 text-sm">
-                                {errors.password.message}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Remember Me & Forgot Password */}
-                    <div className="flex justify-between items-center">
-                        <div className="flex items-center">
-                            <input
-                                type="checkbox"
-                                {...register("rememberMe")}
-                                className="mr-2"
-                            />
-                            <label className="text-lg">Remember Me</label>
-                        </div>
-                        <Link
-                            to="/forgot-password"
-                            className="text-[#28bca9] text-sm underline"
-                        >
-                            Forgot Password?
-                        </Link>
-                    </div>
-
-                    {/* Login Button */}
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        className="w-full bg-[#fb4673] hover:bg-[#28bca9] py-3 mt-4 rounded-lg text-lg font-semibold transition disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
-                    >
-                        {isLoading ? (
-                            <>
-                                <div className="w-5 h-5 border-t-2 border-b-2 border-white rounded-full animate-spin mr-2"></div>
-                                Processing...
-                            </>
-                        ) : (
-                            "Login"
-                        )}
-                    </button>
-                </form>
-
-                {/* Signup Link */}
-                <p className="text-center mt-4">
-                    Don't have an account?{" "}
-                    <Link
-                        to="/signup"
-                        className={`text-[#28bca9] underline ${
-                            isLoading ? "pointer-events-none opacity-70" : ""
-                        }`}
-                    >
-                        Sign Up
-                    </Link>
-                </p>
+                {/* Decorative Elements */}
+                <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                        duration: 30,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "linear",
+                    }}
+                    className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full opacity-80"
+                />
+                <motion.div
+                    animate={{ rotate: -360 }}
+                    transition={{
+                        duration: 25,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "linear",
+                    }}
+                    className="absolute -bottom-4 -left-4 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-80"
+                />
             </motion.div>
-        </section>
+        </div>
     );
 };
 
