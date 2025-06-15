@@ -4,24 +4,24 @@ import {
     Route,
     useLocation,
 } from "react-router-dom";
-import Navbar from "../Components/Navbar";
-import Footer from "../Components/Footer";
-import HeroSection from "../Components/HeroSection";
-import Login from "../Pages/Login";
-import Signup from "../Pages/Signup";
-import UserDashboard from "../Pages/UserDashboard";
-import HospitalDashboard from "../Pages/HospitalDashboard";
-import About from "../Pages/About";
-import Events from "../Pages/Events";
-import Contact from "../Pages/Contact";
-import HospitalDetails from "../Pages/HospitalDetails";
-import EmergencyRequest from "../Pages/EmergencyRequest";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import HeroSection from "../components/HeroSection";
+import Login from "../pages/Login";
+import Signup from "../pages/Signup";
+import UserDashboard from "../pages/UserDashboard";
+import HospitalDashboard from "../pages/HospitalDashboard";
+import About from "../pages/About";
+import Events from "../pages/Events";
+import Contact from "../pages/Contact";
+import HospitalDetails from "../pages/HospitalDetails";
+import EmergencyRequest from "../pages/EmergencyRequest";
 import { Toaster } from "react-hot-toast";
-import EmergencySuccess from "../Pages/EmergencySuccess";
-import Donate from "../Pages/Donate";
-import FindDonor from "../Pages/FindDonor";
-import Requests from "../Pages/Requests";
-import BloodPredictor from "../Pages/BloodPredictor";
+import EmergencySuccess from "../pages/EmergencySuccess";
+import Donate from "../pages/Donate";
+import FindDonor from "../pages/FindDonor";
+import Requests from "../pages/Requests";
+import BloodPredictor from "../pages/BloodPredictor";
 
 // Simple 404 page
 const NotFound = () => (
