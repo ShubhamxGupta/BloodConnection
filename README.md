@@ -55,7 +55,7 @@ Despite advancements in healthcare, many lives are lost due to the unavailabilit
    ```bash
    cd Frontend
    npm install
-   cd ../Backend
+   cd Backend
    npm install
    ```
 
@@ -77,4 +77,12 @@ Despite advancements in healthcare, many lives are lost due to the unavailabilit
 
 3. **Open your browser at:**
    [http://localhost:5173](http://localhost:5173)
+
+---
+
+## Contact
+
+Developed by Shubham Gupta, Abhay Tiwari, Prayasha Nanda and Mohita.
+
+Feel free to reach out via GitHub or email.
 
