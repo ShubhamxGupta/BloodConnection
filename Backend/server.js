@@ -17,17 +17,20 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration
-const corsOptions = {
-    origin: ['https://blood-connection.vercel.app', 'http://localhost:5173'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-    preflightContinue: false,
-    optionsSuccessStatus: 204
-};
-
-app.use(cors(corsOptions));
+// CORS middleware
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', 'https://blood-connection.vercel.app');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+    next();
+});
 
 // Middleware
 app.use(express.json());
