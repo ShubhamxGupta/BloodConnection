@@ -12,7 +12,9 @@ import {
     Filter,
     Users,
     Target,
+    X,
 } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 // Memoized AnimatedSection component to prevent re-renders
 const AnimatedSection = React.memo(({ children, delay = 0 }) => {
@@ -72,75 +74,197 @@ const Particle = React.memo(({ index }) => {
 
 // Memoized DonorCard component
 const DonorCard = React.memo(({ donor, index }) => {
+    const [showEmailModal, setShowEmailModal] = useState(false);
+    const [emailForm, setEmailForm] = useState({
+        subject: "",
+        message: "",
+        urgency: "normal",
+    });
+
     const handleCall = useCallback(() => {
-        // Future implementation for calling donor
-        console.log(`Calling ${donor.name}`);
-    }, [donor.name]);
+        if (donor.phone) {
+            window.location.href = `tel:${donor.phone}`;
+        } else {
+            toast.error("Phone number not available");
+        }
+    }, [donor.phone]);
 
     const handleEmail = useCallback(() => {
-        // Future implementation for emailing donor
-        console.log(`Emailing ${donor.name}`);
-    }, [donor.name]);
+        setShowEmailModal(true);
+    }, []);
+
+    const handleEmailSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch("http://localhost:5000/api/donors/send-email", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    to: donor.email,
+                    toName: donor.name,
+                    from: localStorage.getItem("userEmail") || "anonymous@bloodbond.com",
+                    fromName: localStorage.getItem("userName") || "Anonymous User",
+                    subject: emailForm.subject,
+                    message: emailForm.message,
+                    senderPhone: localStorage.getItem("userPhone") || "",
+                    urgency: emailForm.urgency,
+                    donorBloodGroup: donor.bloodGroup,
+                    donorLocation: `${donor.city}, ${donor.state}`,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                toast.success("Email sent successfully!");
+                setShowEmailModal(false);
+                setEmailForm({ subject: "", message: "", urgency: "normal" });
+            } else {
+                throw new Error(data.message || "Failed to send email");
+            }
+        } catch (error) {
+            toast.error(error.message || "Failed to send email");
+        }
+    };
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
-            whileHover={{ scale: 1.02, y: -5 }}
-            className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 hover:bg-white/15 transition-all duration-500 shadow-xl hover:shadow-2xl">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-                <div className="flex items-center space-x-6">
-                    <motion.div
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.8 }}
-                        className="w-20 h-20 bg-gradient-to-r from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
-                        <User className="w-10 h-10 text-white" />
-                    </motion.div>
+        <>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                whileHover={{ scale: 1.02, y: -5 }}
+                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 hover:bg-white/15 transition-all duration-500 shadow-xl hover:shadow-2xl">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                    <div className="flex items-center space-x-6">
+                        <motion.div
+                            whileHover={{ rotate: 360 }}
+                            transition={{ duration: 0.8 }}
+                            className="w-20 h-20 bg-gradient-to-r from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+                            <User className="w-10 h-10 text-white" />
+                        </motion.div>
 
-                    <div className="min-w-0 flex-1">
-                        <h4 className="text-2xl font-bold text-white mb-3">
-                            {donor.name}
-                        </h4>
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-white/80">
-                            <div className="flex items-center">
-                                <Heart className="w-5 h-5 text-red-400 mr-2 flex-shrink-0" />
-                                <span className="font-semibold text-lg">
-                                    {donor.bloodGroup}
-                                </span>
-                            </div>
-                            <div className="flex items-center">
-                                <MapPin className="w-5 h-5 text-blue-400 mr-2 flex-shrink-0" />
-                                <span className="text-base">
-                                    {donor.city}, {donor.state}
-                                </span>
+                        <div className="min-w-0 flex-1">
+                            <h4 className="text-2xl font-bold text-white mb-3">
+                                {donor.name}
+                            </h4>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-white/80">
+                                <div className="flex items-center">
+                                    <Heart className="w-5 h-5 text-red-400 mr-2 flex-shrink-0" />
+                                    <span className="font-semibold text-lg">
+                                        {donor.bloodGroup}
+                                    </span>
+                                </div>
+                                <div className="flex items-center">
+                                    <MapPin className="w-5 h-5 text-blue-400 mr-2 flex-shrink-0" />
+                                    <span className="text-base">
+                                        {donor.city}, {donor.state}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="flex flex-col sm:flex-row gap-3 lg:flex-shrink-0">
-                    <motion.button
-                        onClick={handleCall}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="min-h-[56px] bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg transition-all duration-300 flex items-center justify-center border border-emerald-400/20 hover:border-emerald-300/40"
-                        title="Contact donor via phone">
-                        <Phone className="w-5 h-5 mr-2" />
-                        Call
-                    </motion.button>
-                    <motion.button
-                        onClick={handleEmail}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="min-h-[56px] bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg transition-all duration-300 flex items-center justify-center border border-blue-400/20 hover:border-blue-300/40"
-                        title="Contact donor via email">
-                        <Mail className="w-5 h-5 mr-2" />
-                        Email
-                    </motion.button>
+                    <div className="flex flex-col sm:flex-row gap-3 lg:flex-shrink-0">
+                        <motion.button
+                            onClick={handleCall}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="min-h-[56px] bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg transition-all duration-300 flex items-center justify-center border border-emerald-400/20 hover:border-emerald-300/40"
+                            title="Contact donor via phone">
+                            <Phone className="w-5 h-5 mr-2" />
+                            Call
+                        </motion.button>
+                        <motion.button
+                            onClick={handleEmail}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="min-h-[56px] bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg transition-all duration-300 flex items-center justify-center border border-blue-400/20 hover:border-blue-300/40"
+                            title="Contact donor via email">
+                            <Mail className="w-5 h-5 mr-2" />
+                            Email
+                        </motion.button>
+                    </div>
                 </div>
-            </div>
-        </motion.div>
+            </motion.div>
+
+            {/* Email Modal */}
+            {showEmailModal && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 mt-20">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 max-w-2xl w-full">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-2xl font-bold text-white">Send Email to {donor.name}</h3>
+                            <button
+                                onClick={() => setShowEmailModal(false)}
+                                className="text-white/60 hover:text-white transition-colors">
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleEmailSubmit} className="space-y-6">
+                            <div>
+                                <label className="block text-white/90 font-medium mb-2">Subject</label>
+                                <input
+                                    type="text"
+                                    value={emailForm.subject}
+                                    onChange={(e) => setEmailForm(prev => ({ ...prev, subject: e.target.value }))}
+                                    required
+                                    className="w-full min-h-[48px] p-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/20 transition-all duration-300"
+                                    placeholder="Enter email subject"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-white/90 font-medium mb-2">Message</label>
+                                <textarea
+                                    value={emailForm.message}
+                                    onChange={(e) => setEmailForm(prev => ({ ...prev, message: e.target.value }))}
+                                    required
+                                    rows={6}
+                                    className="w-full p-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/20 transition-all duration-300 resize-none"
+                                    placeholder="Enter your message"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-white/90 font-medium mb-2">Urgency Level</label>
+                                <select
+                                    value={emailForm.urgency}
+                                    onChange={(e) => setEmailForm(prev => ({ ...prev, urgency: e.target.value }))}
+                                    className="w-full min-h-[48px] p-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/20 transition-all duration-300">
+                                    <option value="normal">Normal</option>
+                                    <option value="urgent">Urgent</option>
+                                    <option value="emergency">Emergency</option>
+                                </select>
+                            </div>
+
+                            <div className="flex justify-end gap-4">
+                                <motion.button
+                                    type="button"
+                                    onClick={() => setShowEmailModal(false)}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors">
+                                    Cancel
+                                </motion.button>
+                                <motion.button
+                                    type="submit"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-medium transition-colors">
+                                    Send Email
+                                </motion.button>
+                            </div>
+                        </form>
+                    </motion.div>
+                </div>
+            )}
+        </>
     );
 });
 
@@ -184,12 +308,15 @@ const FindDonor = () => {
 
                 if (response.ok) {
                     setResults(data);
+                    if (data.length === 0) {
+                        toast.error("No donors found matching your criteria");
+                    }
                 } else {
-                    console.error("Error:", data.message);
-                    setResults([]);
+                    throw new Error(data.message || "Failed to search donors");
                 }
             } catch (error) {
-                console.error("Fetch error:", error);
+                console.error("Search error:", error);
+                toast.error(error.message || "Failed to search donors");
                 setResults([]);
             } finally {
                 setLoading(false);
