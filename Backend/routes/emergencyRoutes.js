@@ -35,7 +35,7 @@ router.get("/verify-email", async (req, res) => {
             service: "gmail",
             auth: {
                 user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
+                pass: process.env.ndzgmiwmtajdghpy,
             },
         });
 
@@ -48,7 +48,7 @@ router.get("/verify-email", async (req, res) => {
             error: error.message,
             config: {
                 email: process.env.EMAIL_USER,
-                password: process.env.EMAIL_PASS ? "Set" : "Not Set",
+                password: process.env.ndzgmiwmtajdghpy ? "Set" : "Not Set",
             },
         });
     }
