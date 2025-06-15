@@ -29,6 +29,22 @@ app.use(express.urlencoded({ extended: true }))
 verifyEmailService();
 
 // Routes
+app.get("/", (req, res) => {
+    const endpoints = {
+        "API Endpoints": {
+            "Authentication": "/api/auth",
+            "Users": "/api/users",
+            "Hospitals": "/api/hospitals",
+            "Emergency": "/api/emergency",
+            "Chatbot": "/api/chatbot",
+            "Donation": "/api/donate",
+            "Donors": "/api/donors",
+            "Prediction": "/api/predict",
+            "Contact": "/api/contact"
+        }
+    };
+    res.status(200).json(endpoints);
+});
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/hospitals", hospitalRoutes);
