@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import axios from "axios"
 import { Heart, Droplets, Activity, Clock, Users, Award, ChevronDown, Sparkles, TrendingUp } from "lucide-react"
+import config from '../src/config';
 
 const BloodDonationPredictor = () => {
   const [formData, setFormData] = useState({
@@ -60,7 +61,7 @@ const BloodDonationPredictor = () => {
       // Simulate API call delay for better UX
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
-      const res = await axios.post("http://localhost:5000/api/predict", formData)
+      const res = await axios.post(`${config.API_URL}/api/predict`, formData)
       setResult({
         prediction: res.data.prediction === 1 ? "Likely to Donate" : "Not Likely to Donate",
         confidence: Math.floor(Math.random() * 20) + 80, // Simulated confidence

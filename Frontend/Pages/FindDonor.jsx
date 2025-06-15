@@ -3,6 +3,7 @@
 import { useState, useRef } from "react"
 import { motion, useInView, AnimatePresence } from "framer-motion"
 import { Search, User, MapPin, Heart, Phone, Mail, Filter, Users, Target, X, Send, MessageSquare } from "lucide-react"
+import config from '../src/config';
 
 const FindDonor = () => {
   const [form, setForm] = useState({ bloodGroup: "", city: "", state: "" })
@@ -37,7 +38,7 @@ const FindDonor = () => {
 
     try {
       const query = new URLSearchParams(form).toString()
-      const response = await fetch(`http://localhost:5000/api/donors/search?${query}`)
+      const response = await fetch(`${config.API_URL}/api/donors/search?${query}`)
       const data = await response.json()
 
       if (response.ok) {
@@ -97,7 +98,7 @@ const FindDonor = () => {
         donorLocation: `${emailModal.donor.city}, ${emailModal.donor.state}`,
       }
 
-      const response = await fetch("http://localhost:5000/api/donors/send-email", {
+      const response = await fetch(`${config.API_URL}/api/donors/send-email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

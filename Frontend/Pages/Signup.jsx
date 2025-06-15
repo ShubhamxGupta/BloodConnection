@@ -25,6 +25,7 @@ import {
     ArrowLeft,
     Home,
 } from "lucide-react";
+import config from '../src/config';
 
 const schema = yup.object().shape({
     name: yup.string().when("$userType", {
@@ -324,7 +325,7 @@ const Signup = () => {
                 const endpoint =
                     userType === "user" ? "register/user" : "register/hospital";
                 const response = await fetch(
-                    `http://localhost:5000/api/auth/${endpoint}`,
+                    `${config.API_URL}/api/auth/${endpoint}`,
                     {
                         method: "POST",
                         headers: {

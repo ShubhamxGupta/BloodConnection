@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useMemo } from "react"
 import { toast } from "react-hot-toast"
 import { motion, useInView } from "framer-motion"
 import { Heart, User, Mail, Phone, MapPin, Droplets, CheckCircle, Shield, Award } from "lucide-react"
+import config from '../src/config';
 
 const Donate = () => {
   const [form, setForm] = useState({
@@ -88,7 +89,7 @@ const Donate = () => {
       setSubmitting(true)
 
       try {
-        const response = await fetch("http://localhost:5000/api/donate", {
+        const response = await fetch(`${config.API_URL}/api/donate`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
