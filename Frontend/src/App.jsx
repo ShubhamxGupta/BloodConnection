@@ -4,9 +4,9 @@ import {
     Route,
     useLocation,
 } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import HeroSection from "../components/HeroSection";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import HeroSection from "../../components/HeroSection";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import UserDashboard from "../pages/UserDashboard";
