@@ -17,13 +17,16 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS for all routes
-app.use(cors());
-
-// Handle preflight requests
-app.options('*', cors());
-
 // Middleware
+app.use(
+    cors({
+        origin: '*', // Allow all origins
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization']
+    })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 verifyEmailService();
