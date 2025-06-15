@@ -24,6 +24,7 @@ import {
   Settings,
 } from "lucide-react"
 import axios from "axios"
+import ChatBot from "../components/ChatBot"
 
 // Memoized components to prevent re-renders
 const StatCard = React.memo(({ title, value, icon: Icon, color, bgColor, delay = 0 }) => (
@@ -645,6 +646,9 @@ const UserDashboard = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Add ChatBot at the end, before closing div */}
+      <ChatBot />
     </div>
   )
 }

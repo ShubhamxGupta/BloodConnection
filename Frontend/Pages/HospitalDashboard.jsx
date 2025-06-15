@@ -17,6 +17,7 @@ import {
   LogOut,
   Settings,
 } from "lucide-react"
+import ChatBot from "../components/ChatBot"
 
 const HospitalDashboard = () => {
   const navigate = useNavigate()
@@ -425,6 +426,9 @@ const HospitalDashboard = () => {
           </div>
         </AnimatedSection>
       </div>
+
+      {/* Add ChatBot at the end, before closing div */}
+      <ChatBot />
     </div>
   )
 }

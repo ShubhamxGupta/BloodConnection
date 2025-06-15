@@ -42,37 +42,35 @@ const Chatbot = () => {
     const welcomeMessage = useMemo(
         () => ({
             role: "bot",
-            content: `🩸 **Welcome to BloodConnection AI Assistant!**
+            content: `👋 **Welcome to BloodConnection AI!**
 
-I'm your comprehensive blood management assistant with these capabilities:
+I'm your 24/7 blood management assistant. Here's what I can help you with:
 
-🔥 **Blood Unit Management:**
-• Place blood requests with tracking
-• Real-time stock availability
-• Schedule pickup & delivery
+🩸 **Blood Services**
+• Request blood units
+• Check availability
+• Track requests
+• Emergency alerts
 
-💉 **Donation Services:**
-• Eligibility assessment
-• Appointment scheduling  
-• Find nearest centers
+💉 **Donation Services**
+• Eligibility check
+• Schedule donation
+• Find centers
+• Donation history
 
-🏥 **Hospital Services:**
-• Registration & profile management
-• Emergency alert system
-• Bulk request handling
-
-📋 **Smart Features:**
-• Blood report analysis (PDF upload)
-• Compatibility checking
-• 24/7 emergency support
+🏥 **Hospital Services**
+• Registration
+• Bulk requests
+• Inventory management
+• Emergency support
 
 **Quick Start:**
 • "I need O+ blood urgently"
 • "Am I eligible to donate?"
 • "Show blood inventory"
-• "Schedule donation appointment"
+• "Schedule donation"
 
-What can I help you with today?`,
+How can I assist you today?`,
             timestamp: Date.now(),
         }),
         [],
@@ -873,7 +871,7 @@ ${error.message || "Could not read the PDF properly."}
                     exit={{ scale: 0 }}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="fixed bottom-6 right-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all z-50"
+                    className="fixed bottom-8 right-8 bg-gradient-to-r from-red-500 to-red-600 text-white p-5 rounded-full shadow-2xl hover:shadow-red-500/25 transition-all z-50 group"
                     onClick={toggleChat}
                     aria-label="Open BloodConnection AI Assistant"
                 >
@@ -884,20 +882,26 @@ ${error.message || "Could not read the PDF properly."}
                             repeat: Number.POSITIVE_INFINITY,
                             ease: "linear",
                         }}
+                        className="relative"
                     >
-                        <Sparkles size={28} />
+                        <Sparkles size={32} className="text-white" />
+                        <span className="absolute -top-2 -right-2 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white" />
                     </motion.div>
+                    <span className="absolute -top-12 right-0 bg-white/10 backdrop-blur-sm text-white text-sm py-2 px-4 rounded-lg border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        Chat with BloodConnection AI
+                    </span>
                 </motion.button>
             ) : (
                 <motion.div
                     initial={{ opacity: 0, y: 50, scale: 0.9 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 50, scale: 0.9 }}
-                    className={`fixed bottom-6 right-6 bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 z-50 transition-all duration-300 ${isMinimized ? "w-80 h-16" : "w-96 h-[500px]"
-                        }`}
+                    className={`fixed bottom-8 right-8 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-white/20 z-50 transition-all duration-300 ${
+                        isMinimized ? "w-80 h-16" : "w-[420px] h-[600px]"
+                    }`}
                 >
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex justify-between items-center">
+                    <div className="bg-gradient-to-r from-red-500 to-red-600 p-5 flex justify-between items-center">
                         <div className="flex items-center space-x-3">
                             <motion.div
                                 animate={{ rotate: 360 }}
@@ -906,37 +910,41 @@ ${error.message || "Could not read the PDF properly."}
                                     repeat: Number.POSITIVE_INFINITY,
                                     ease: "linear",
                                 }}
-                                className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
+                                className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center"
                             >
-                                <Bot className="text-white" size={20} />
+                                <Bot className="text-white" size={24} />
                             </motion.div>
                             <div>
-                                <h2 className="text-lg font-bold text-white">BloodConnection AI</h2>
-                                <p className="text-blue-100 text-sm">Your Health Assistant</p>
+                                <h2 className="text-xl font-bold text-white">BloodConnection AI</h2>
+                                <p className="text-white/80 text-sm">Your Health Assistant</p>
                             </div>
                         </div>
                         <div className="flex items-center space-x-2">
-                            <button
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
                                 onClick={toggleMinimize}
-                                className="text-white hover:bg-white/20 rounded-full p-2 transition-colors"
+                                className="text-white hover:bg-white/20 rounded-full p-2.5 transition-colors"
                                 title={isMinimized ? "Maximize" : "Minimize"}
                             >
-                                {isMinimized ? <Maximize2 size={18} /> : <Minimize2 size={18} />}
-                            </button>
-                            <button
+                                {isMinimized ? <Maximize2 size={20} /> : <Minimize2 size={20} />}
+                            </motion.button>
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
                                 onClick={toggleChat}
-                                className="text-white hover:bg-white/20 rounded-full p-2 transition-colors"
+                                className="text-white hover:bg-white/20 rounded-full p-2.5 transition-colors"
                                 title="Close"
                             >
-                                <X size={18} />
-                            </button>
+                                <X size={20} />
+                            </motion.button>
                         </div>
                     </div>
 
-                    {!isMinimized && (
+                    {!isMinimized ? (
                         <>
                             {/* Messages */}
-                            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50 to-white">
+                            <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-gradient-to-b from-slate-900/50 to-purple-900/50 backdrop-blur-sm">
                                 {messages.map((msg, index) => (
                                     <motion.div
                                         key={index}
@@ -945,17 +953,18 @@ ${error.message || "Could not read the PDF properly."}
                                         transition={{ delay: index * 0.1 }}
                                         className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                                     >
-                                        <div className="flex items-start max-w-[85%] space-x-2">
+                                        <div className="flex items-start max-w-[85%] space-x-3">
                                             {msg.role === "bot" && (
-                                                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">
-                                                    <Bot size={16} className="text-white" />
+                                                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center flex-shrink-0">
+                                                    <Bot size={18} className="text-white" />
                                                 </div>
                                             )}
                                             <div
-                                                className={`p-4 rounded-2xl shadow-sm ${msg.role === "user"
-                                                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-br-sm"
-                                                        : "bg-white border border-gray-200 text-gray-800 rounded-bl-sm"
-                                                    }`}
+                                                className={`p-4 rounded-2xl shadow-sm ${
+                                                    msg.role === "user"
+                                                        ? "bg-gradient-to-r from-red-500 to-red-600 text-white rounded-br-sm"
+                                                        : "bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-bl-sm"
+                                                }`}
                                             >
                                                 <div className="whitespace-pre-line text-sm leading-relaxed">
                                                     {msg.content.split("**").map((part, i) =>
@@ -980,8 +989,8 @@ ${error.message || "Could not read the PDF properly."}
                                                 )}
                                             </div>
                                             {msg.role === "user" && (
-                                                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center flex-shrink-0">
-                                                    <User size={16} className="text-white" />
+                                                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                                                    <User size={18} className="text-white" />
                                                 </div>
                                             )}
                                         </div>
@@ -991,13 +1000,13 @@ ${error.message || "Could not read the PDF properly."}
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.8 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className="flex items-center space-x-2"
+                                        className="flex items-center space-x-3"
                                     >
-                                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
-                                            <Bot size={16} className="text-white" />
+                                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center">
+                                            <Bot size={18} className="text-white" />
                                         </div>
-                                        <div className="bg-white border border-gray-200 p-3 rounded-2xl rounded-bl-sm shadow-sm">
-                                            <div className="flex space-x-1">
+                                        <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-4 rounded-2xl rounded-bl-sm shadow-sm">
+                                            <div className="flex space-x-1.5">
                                                 {[0, 1, 2].map((i) => (
                                                     <motion.div
                                                         key={i}
@@ -1009,7 +1018,7 @@ ${error.message || "Could not read the PDF properly."}
                                                             repeat: Number.POSITIVE_INFINITY,
                                                             delay: i * 0.2,
                                                         }}
-                                                        className="w-2 h-2 bg-blue-500 rounded-full"
+                                                        className="w-2.5 h-2.5 bg-red-500 rounded-full"
                                                     />
                                                 ))}
                                             </div>
@@ -1020,60 +1029,64 @@ ${error.message || "Could not read the PDF properly."}
                             </div>
 
                             {/* Input */}
-                            <div className="border-t border-gray-200 p-4 bg-white">
+                            <div className="border-t border-white/20 p-5 bg-gradient-to-b from-slate-900/50 to-purple-900/50 backdrop-blur-sm">
                                 <div className="flex flex-col space-y-3">
                                     {selectedFile && (
                                         <motion.div
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
-                                            className="flex items-center space-x-2 p-3 bg-blue-50 rounded-xl border border-blue-200"
+                                            className="flex items-center space-x-2 p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20"
                                         >
                                             {selectedFile.type.startsWith("image/") ? (
-                                                <ImageIcon size={18} className="text-blue-600" />
+                                                <ImageIcon size={18} className="text-white/80" />
                                             ) : (
-                                                <FileText size={18} className="text-blue-600" />
+                                                <FileText size={18} className="text-white/80" />
                                             )}
-                                            <span className="text-sm text-blue-800 truncate flex-1">{selectedFile.name}</span>
-                                            <button
+                                            <span className="text-sm text-white/80 truncate flex-1">{selectedFile.name}</span>
+                                            <motion.button
+                                                whileHover={{ scale: 1.1 }}
+                                                whileTap={{ scale: 0.9 }}
                                                 onClick={() => setSelectedFile(null)}
-                                                className="text-blue-600 hover:text-blue-800 transition-colors"
+                                                className="text-white/80 hover:text-white transition-colors"
                                             >
                                                 <X size={16} />
-                                            </button>
+                                            </motion.button>
                                         </motion.div>
                                     )}
 
-                                    <div className="flex items-end space-x-2">
+                                    <div className="flex items-end space-x-3">
                                         <div className="flex-1 relative">
                                             <textarea
                                                 value={input}
                                                 onChange={(e) => setInput(e.target.value)}
                                                 onKeyDown={handleKeyDown}
-                                                placeholder="Ask about blood availability, hospitals, or upload a report..."
-                                                className="w-full p-3 pr-12 border border-gray-300 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                                placeholder="Type your message here..."
+                                                className="w-full p-4 pr-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all text-white placeholder-white/50"
                                                 rows="1"
                                                 style={{
-                                                    minHeight: "44px",
+                                                    minHeight: "52px",
                                                     maxHeight: "120px",
                                                 }}
                                                 disabled={loading}
                                             />
-                                            <button
+                                            <motion.button
+                                                whileHover={{ scale: 1.1 }}
+                                                whileTap={{ scale: 0.9 }}
                                                 onClick={() => fileInputRef.current?.click()}
-                                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600 transition-colors"
+                                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/50 hover:text-white transition-colors"
                                                 title="Upload file"
                                             >
-                                                <Paperclip size={18} />
-                                            </button>
+                                                <Paperclip size={20} />
+                                            </motion.button>
                                         </div>
                                         <motion.button
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 0.95 }}
                                             onClick={handleSend}
                                             disabled={loading || (!input.trim() && !selectedFile)}
-                                            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-3 rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="bg-gradient-to-r from-red-500 to-red-600 text-white p-4 rounded-xl hover:shadow-lg hover:shadow-red-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed h-[52px] w-[52px] flex items-center justify-center"
                                         >
-                                            {loading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                                            {loading ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
                                         </motion.button>
                                     </div>
                                 </div>
@@ -1086,18 +1099,57 @@ ${error.message || "Could not read the PDF properly."}
                                     className="hidden"
                                 />
 
-                                <div className="flex items-center justify-center mt-3 space-x-4 text-xs text-gray-500">
-                                    <div className="flex items-center space-x-1">
-                                        <Heart size={12} className="text-red-500" />
+                                <div className="flex items-center justify-center mt-4 space-x-6 text-xs text-white/50">
+                                    <div className="flex items-center space-x-1.5">
+                                        <Heart size={14} className="text-red-400" />
                                         <span>Powered by AI</span>
                                     </div>
-                                    <div className="flex items-center space-x-1">
-                                        <Activity size={12} className="text-green-500" />
+                                    <div className="flex items-center space-x-1.5">
+                                        <Activity size={14} className="text-emerald-400" />
                                         <span>Real-time Data</span>
                                     </div>
                                 </div>
                             </div>
                         </>
+                    ) : (
+                        // Minimized View
+                        <div className="flex items-center justify-between px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-600">
+                            <div className="flex items-center space-x-2.5">
+                                <motion.div
+                                    animate={{ rotate: 360 }}
+                                    transition={{
+                                        duration: 4,
+                                        repeat: Number.POSITIVE_INFINITY,
+                                        ease: "linear",
+                                    }}
+                                    className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"
+                                >
+                                    <Bot size={16} className="text-white" />
+                                </motion.div>
+                                <div className="min-w-0">
+                                    <p className="text-sm font-medium text-white truncate">BloodConnection AI</p>
+                                    <p className="text-xs text-white/80 truncate">Click to expand</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center space-x-1.5 ml-2">
+                                <motion.button
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={toggleMinimize}
+                                    className="text-white/80 hover:text-white hover:bg-white/20 rounded-full p-1.5 transition-colors"
+                                >
+                                    <Maximize2 size={16} />
+                                </motion.button>
+                                <motion.button
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={toggleChat}
+                                    className="text-white/80 hover:text-white hover:bg-white/20 rounded-full p-1.5 transition-colors"
+                                >
+                                    <X size={16} />
+                                </motion.button>
+                            </div>
+                        </div>
                     )}
                 </motion.div>
             )}
