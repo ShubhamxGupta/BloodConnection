@@ -147,13 +147,22 @@ const findNearestHospital = async (req, res) => {
 
 const getHospitalProfile = async (req, res) => {
     try {
-        const hospital = await Hospital.findById(req.user.id).select(
-            "-password"
-        );
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({ message: "Authentication required" });
+        }
+
+        const hospital = await Hospital.findById(req.user.id).select("-password");
+        if (!hospital) {
+            return res.status(404).json({ message: "Hospital not found" });
+        }
+
         res.json(hospital);
     } catch (err) {
-        console.error("Error in getHospitalProfile:", err); // Add this line to log the error
-        res.status(500).json({ message: err.message });
+        console.error("Error in getHospitalProfile:", err);
+        if (err.name === 'CastError') {
+            return res.status(400).json({ message: "Invalid hospital ID" });
+        }
+        res.status(500).json({ message: "Failed to fetch hospital profile" });
     }
 };
 

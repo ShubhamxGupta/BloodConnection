@@ -14,7 +14,7 @@ import HospitalDashboard from "../Pages/HospitalDashboard";
 import About from "../Pages/About";
 import Events from "../Pages/Events";
 import Contact from "../Pages/Contact";
-import HospitalPage from "../Pages/HospitalPage";
+import HospitalDetails from "../Pages/HospitalDetails";
 import EmergencyRequest from "../Pages/EmergencyRequest";
 import { Toaster } from "react-hot-toast";
 import EmergencySuccess from "../Pages/EmergencySuccess";
@@ -85,7 +85,7 @@ const App = () => {
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/donate" element={<Donate />} />
                     <Route path="/find-donor" element={<FindDonor />} />
-                    <Route path="/hospital/:id" element={<HospitalPage />} />
+                    <Route path="/hospital/:id" element={<HospitalDetails />} />
                     <Route path="/requests" element={<Requests />} />
                     <Route path="/emergency" element={<EmergencyRequest />} />
                     <Route

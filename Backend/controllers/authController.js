@@ -162,9 +162,18 @@ const loginHospital = async (req, res) => {
         const token = jwt.sign(
             { id: hospital._id, type: "hospital" },
             process.env.JWT_SECRET,
-            { expiresIn: "1h" }
+            { expiresIn: "24h" }
         );
-        res.json({ token, userType: "hospital" });
+
+        // Convert hospital to object and remove password before sending
+        const { password: pw, __v, ...hospitalDetails } = hospital.toObject();
+
+        res.json({ 
+            token, 
+            userType: "hospital",
+            userId: hospital._id,
+            hospital: hospitalDetails // full hospital details (excluding password)
+        });
     } catch (err) {
         console.error("Login error:", err);
         res.status(500).json({

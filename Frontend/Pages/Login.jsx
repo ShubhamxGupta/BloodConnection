@@ -240,19 +240,33 @@ const Login = () => {
                 try {
                     result = await response.json();
                 } catch (jsonErr) {
-                    result = { message: "Login failed. Please try again." };
+                    console.error("JSON parse error:", jsonErr);
+                    throw new Error("Invalid response from server");
                 }
 
                 if (!response.ok) {
                     throw new Error(result.message || "Login failed");
                 }
 
+                if (!result.token) {
+                    throw new Error("No authentication token received");
+                }
+
+                // Store authentication data
                 localStorage.setItem("token", result.token);
                 localStorage.setItem("userType", userType);
-                localStorage.setItem("userName", result.userName);
+                
+                // Store user/hospital ID
+                if (result.userId) {
+                    localStorage.setItem("userId", result.userId);
+                }
+
+                // Store additional data if available
+                if (userType === "hospital" && result.hospital) {
+                    localStorage.setItem("hospitalData", JSON.stringify(result.hospital));
+                }
 
                 toast.success("Login successful!", {
-                    duration: 3000,
                     style: {
                         background: "linear-gradient(135deg, #10b981, #059669)",
                         color: "white",
@@ -261,15 +275,15 @@ const Login = () => {
                     },
                 });
 
+                // Redirect based on user type
                 if (userType === "user") {
                     navigate("/user-dashboard");
                 } else {
                     navigate("/hospital-dashboard");
                 }
-            } catch (err) {
-                console.error("Error:", err.message);
-                toast.error(err.message || "Something went wrong", {
-                    duration: 4000,
+            } catch (error) {
+                console.error("Login error:", error);
+                toast.error(error.message || "Login failed. Please try again.", {
                     style: {
                         background: "linear-gradient(135deg, #ef4444, #dc2626)",
                         color: "white",

@@ -193,6 +193,8 @@ const UserDashboard = () => {
   const [filteredHospitals, setFilteredHospitals] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [filterDistance, setFilterDistance] = useState("all")
+  const [isLoadingHospitals, setIsLoadingHospitals] = useState(true)
+  const [hospitalError, setHospitalError] = useState(null)
 
   // Memoized static data
   const userStats = useMemo(
@@ -227,56 +229,6 @@ const UserDashboard = () => {
         description: "Donation appointment scheduled",
         date: "2024-01-20",
         status: "completed",
-      },
-    ],
-    [],
-  )
-
-  const mockHospitals = useMemo(
-    () => [
-      {
-        id: 1,
-        name: "City General Hospital",
-        address: "123 Medical Center Dr, New York, NY",
-        phone: "+1 (555) 123-4567",
-        rating: 4.8,
-        distance: 2.3,
-        bloodTypes: ["A+", "A-", "B+", "O+", "O-"],
-        emergencyServices: true,
-        availability: "24/7",
-      },
-      {
-        id: 2,
-        name: "Metropolitan Medical Center",
-        address: "456 Health Plaza, New York, NY",
-        phone: "+1 (555) 234-5678",
-        rating: 4.6,
-        distance: 3.7,
-        bloodTypes: ["A+", "B+", "AB+", "O+"],
-        emergencyServices: true,
-        availability: "24/7",
-      },
-      {
-        id: 3,
-        name: "Community Health Hospital",
-        address: "789 Wellness Ave, New York, NY",
-        phone: "+1 (555) 345-6789",
-        rating: 4.4,
-        distance: 5.2,
-        bloodTypes: ["A-", "B-", "AB-", "O-"],
-        emergencyServices: false,
-        availability: "6 AM - 10 PM",
-      },
-      {
-        id: 4,
-        name: "Regional Blood Center",
-        address: "321 Donation St, New York, NY",
-        phone: "+1 (555) 456-7890",
-        rating: 4.9,
-        distance: 1.8,
-        bloodTypes: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
-        emergencyServices: true,
-        availability: "24/7",
       },
     ],
     [],
@@ -327,15 +279,41 @@ const UserDashboard = () => {
   useEffect(() => {
     if (!isAuthenticated) return
 
-    const loadHospitals = () => {
-      setTimeout(() => {
-        setHospitals(mockHospitals)
-        setFilteredHospitals(mockHospitals)
-      }, 1000)
+    const loadHospitals = async () => {
+      try {
+        setIsLoadingHospitals(true)
+        setHospitalError(null)
+        const response = await axios.get("http://localhost:5000/api/hospitals")
+        
+        // Transform the hospital data to match our frontend structure
+        const transformedHospitals = response.data.map(hospital => ({
+          id: hospital._id,
+          name: hospital.hospitalName,
+          address: `${hospital.location.city}, ${hospital.location.state}`,
+          phone: hospital.phone,
+          rating: hospital.reviews?.length > 0 
+            ? (hospital.reviews.reduce((acc, review) => acc + review.rating, 0) / hospital.reviews.length).toFixed(1)
+            : 0,
+          distance: 0, // This will be calculated when we implement location-based features
+          bloodTypes: Object.entries(hospital.inventory)
+            .filter(([_, units]) => units > 0)
+            .map(([type]) => type.replace(/([A-Z])/g, '$1').toUpperCase()),
+          emergencyServices: true, // This could be added to the hospital model if needed
+          availability: "24/7", // This could be added to the hospital model if needed
+        }))
+
+        setHospitals(transformedHospitals)
+        setFilteredHospitals(transformedHospitals)
+      } catch (error) {
+        console.error("Error fetching hospitals:", error)
+        setHospitalError("Failed to load hospitals. Please try again later.")
+      } finally {
+        setIsLoadingHospitals(false)
+      }
     }
 
     loadHospitals()
-  }, [isAuthenticated, mockHospitals])
+  }, [isAuthenticated])
 
   // Filter hospitals
   useEffect(() => {
@@ -619,7 +597,7 @@ const UserDashboard = () => {
               </div>
 
               {/* Hospital List */}
-              {hospitals.length === 0 ? (
+              {isLoadingHospitals ? (
                 <div className="flex justify-center items-center py-12">
                   <motion.div
                     animate={{ rotate: 360 }}
@@ -630,6 +608,18 @@ const UserDashboard = () => {
                     }}
                     className="w-12 h-12 border-4 border-red-500/30 border-t-red-500 rounded-full"
                   />
+                </div>
+              ) : hospitalError ? (
+                <div className="text-center py-12">
+                  <AlertCircle size={48} className="mx-auto text-red-400 mb-4" />
+                  <h3 className="text-lg font-semibold text-white/70 mb-2">Error Loading Hospitals</h3>
+                  <p className="text-white/50">{hospitalError}</p>
+                </div>
+              ) : hospitals.length === 0 ? (
+                <div className="text-center py-12">
+                  <MapPin size={48} className="mx-auto text-white/40 mb-4" />
+                  <h3 className="text-lg font-semibold text-white/70 mb-2">No Hospitals Found</h3>
+                  <p className="text-white/50">There are no hospitals registered in the system yet.</p>
                 </div>
               ) : (
                 <div className="grid md:grid-cols-2 gap-6">
