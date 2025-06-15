@@ -24,7 +24,6 @@ import {
   Settings,
 } from "lucide-react"
 import axios from "axios"
-import config from '../src/config';
 
 // Memoized components to prevent re-renders
 const StatCard = React.memo(({ title, value, icon: Icon, color, bgColor, delay = 0 }) => (
@@ -304,7 +303,7 @@ const UserDashboard = () => {
   useEffect(() => {
     if (token) {
       axios
-        .get(`${config.API_URL}/api/users/me`, {
+        .get("http://localhost:5000/api/users/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

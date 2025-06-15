@@ -21,7 +21,6 @@ import {
     Home,
 } from "lucide-react";
 import { useState, useCallback, useMemo } from "react";
-import config from '../src/config';
 
 const schema = yup.object().shape({
     email: yup.string().email("Invalid email").required("Email is required"),
@@ -227,7 +226,7 @@ const Login = () => {
                 const endpoint =
                     userType === "user" ? "login/user" : "login/hospital";
                 const response = await fetch(
-                    `${config.API_URL}/api/auth/${endpoint}`,
+                    `http://localhost:5000/api/auth/${endpoint}`,
                     {
                         method: "POST",
                         headers: {

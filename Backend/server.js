@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(
     cors({
-        origin: process.env.FRONTEND_URL || "https://blood-connection.vercel.app/",
+        origin: "http://localhost:5173",
         credentials: true,
     })
 );
@@ -45,25 +45,20 @@ mongoose
     .then(() => console.log("MongoDB connected"))
     .catch((err) => {
         console.error("MongoDB connection error:", err);
-        process.exit(1);
+        process.exit(1); // Exit the process with failure
     });
 
-// For local development
-if (process.env.NODE_ENV !== 'production') {
-    const startServer = (port) => {
-        app.listen(port, () => {
-            console.log(`Server running on port ${port}`);
-        }).on("error", (err) => {
-            if (err.code === "EADDRINUSE") {
-                console.log(`Port ${port} is in use, trying another port...`);
-                startServer(port + 1);
-            } else {
-                console.error(err);
-            }
-        });
-    };
-    startServer(PORT);
-}
+const startServer = (port) => {
+    app.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+    }).on("error", (err) => {
+        if (err.code === "EADDRINUSE") {
+            console.log(`Port ${port} is in use, trying another port...`);
+            startServer(port + 1);
+        } else {
+            console.error(err);
+        }
+    });
+};
 
-// Export the Express API
-module.exports = app;
+startServer(PORT);

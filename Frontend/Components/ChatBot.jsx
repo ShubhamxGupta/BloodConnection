@@ -18,7 +18,6 @@ import {
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import * as pdfjs from "pdfjs-dist"
-import config from '../src/config'
 
 // Set worker path for pdf.js
 pdfjs.GlobalWorkerOptions.workerSrc = `${window.location.origin}/pdf.worker.min.mjs`
@@ -91,7 +90,7 @@ What can I help you with today?`,
     useEffect(() => {
         const fetchBotData = async () => {
             try {
-                const response = await fetch(`${config.API_URL}/api/chatbot/data`)
+                const response = await fetch("http://localhost:5000/api/chatbot/data")
                 const data = await response.json()
                 setBotData(data)
             } catch (error) {

@@ -3,7 +3,6 @@
 import { useState, useRef, useCallback, useMemo } from "react"
 import { motion, useInView } from "framer-motion"
 import { Mail, Phone, MapPin, Send, MessageCircle, Clock, Globe, CheckCircle, AlertCircle } from "lucide-react"
-import config from '../src/config';
 
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" })
@@ -51,7 +50,7 @@ const Contact = () => {
       try {
         console.log("📤 Sending contact form data:", form)
 
-        const response = await fetch(`${config.API_URL}/api/contact/send-message`, {
+        const response = await fetch("http://localhost:5000/api/contact/send-message", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
