@@ -324,7 +324,7 @@ const Signup = () => {
                 const endpoint =
                     userType === "user" ? "register/user" : "register/hospital";
                 const response = await fetch(
-                    `http://localhost:5000/api/auth/${endpoint}`,
+                    `https://bloodconnection-backend.onrender.com/api/auth/${endpoint}`,
                     {
                         method: "POST",
                         headers: {

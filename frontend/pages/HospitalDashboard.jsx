@@ -78,7 +78,7 @@ const HospitalDashboard = () => {
         throw new Error("No authentication token found")
       }
 
-      const response = await axios.get("http://localhost:5000/api/hospitals/profile", {
+      const response = await axios.get("https://bloodconnection-backend.onrender.com/api/hospitals/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -138,7 +138,7 @@ const HospitalDashboard = () => {
     try {
       setUpdating(true)
       const response = await axios.put(
-        "http://localhost:5000/api/hospitals/inventory",
+        "https://bloodconnection-backend.onrender.com/api/hospitals/inventory",
         inventory,
         {
           headers: {

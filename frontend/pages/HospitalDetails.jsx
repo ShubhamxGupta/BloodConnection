@@ -30,7 +30,7 @@ const HospitalDetails = () => {
       try {
         setIsLoading(true)
         setError(null)
-        const response = await axios.get(`http://localhost:5000/api/hospitals/${id}`)
+        const response = await axios.get(`https://bloodconnection-backend.onrender.com/api/hospitals/${id}`)
         setHospital(response.data)
       } catch (error) {
         console.error("Error fetching hospital details:", error)

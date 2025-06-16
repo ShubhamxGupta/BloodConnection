@@ -256,7 +256,7 @@ const UserDashboard = () => {
   useEffect(() => {
     if (token) {
       axios
-        .get("http://localhost:5000/api/users/me", {
+        .get("https://bloodconnection-backend.onrender.com/api/users/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -284,7 +284,7 @@ const UserDashboard = () => {
       try {
         setIsLoadingHospitals(true)
         setHospitalError(null)
-        const response = await axios.get("http://localhost:5000/api/hospitals")
+        const response = await axios.get("https://bloodconnection-backend.onrender.com/api/hospitals")
         
         // Transform the hospital data to match our frontend structure
         const transformedHospitals = response.data.map(hospital => ({

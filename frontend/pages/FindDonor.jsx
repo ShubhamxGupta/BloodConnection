@@ -96,7 +96,7 @@ const DonorCard = React.memo(({ donor, index }) => {
     const handleEmailSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch("http://localhost:5000/api/donors/send-email", {
+            const response = await fetch("https://bloodconnection-backend.onrender.com/api/donors/send-email", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -302,7 +302,7 @@ const FindDonor = () => {
             try {
                 const query = new URLSearchParams(form).toString();
                 const response = await fetch(
-                    `http://localhost:5000/api/donors/search?${query}`
+                    `https://bloodconnection-backend.onrender.com/api/donors/search?${query}`
                 );
                 const data = await response.json();
 
