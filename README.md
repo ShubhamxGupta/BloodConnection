@@ -53,9 +53,9 @@ Despite advancements in healthcare, many lives are lost due to the unavailabilit
 2. **Install dependencies:**
 
    ```bash
-   cd Frontend
+   cd frontend
    npm install
-   cd Backend
+   cd backend
    npm install
    ```
 
@@ -64,14 +64,14 @@ Despite advancements in healthcare, many lives are lost due to the unavailabilit
 1. **Start backend server:**
 
    ```bash
-   cd Backend
+   cd backend
    node server.js
    ```
 
 2. **Start frontend server (in a new terminal):**
 
    ```bash
-   cd Frontend
+   cd frontend
    npm run dev
    ```
 
