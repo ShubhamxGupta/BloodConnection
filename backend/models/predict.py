@@ -2,7 +2,7 @@
 
 import sys
 import json
-import math
+import numpy as np
 import pickle
 
 # Load trained logistic regression model
@@ -21,10 +21,10 @@ try:
     time = input_data["time"]
 
     # Apply log transformation to monetary as done during training
-    monetary_log = math.log(monetary)
+    monetary_log = np.log(monetary)
 
-    # Build input vector as a list of lists (single sample)
-    input_vector = [[recency, frequency, time, monetary_log]]
+    # Build input vector with the same feature names/columns used during training
+    input_vector = np.array([[recency, frequency, time, monetary_log]])
 
     # Predict
     prediction = model.predict(input_vector)[0]
