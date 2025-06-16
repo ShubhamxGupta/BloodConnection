@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:4173", // add this
-  "https://bloodconnection.vercel.app" // or your production domain if any
+  "https://blood-connection.vercel.app" // or your production domain if any
 ];
 
 app.use(cors({
