@@ -22,6 +22,7 @@ import Donate from "../pages/Donate";
 import FindDonor from "../pages/FindDonor";
 import Requests from "../pages/Requests";
 import BloodPredictor from "../pages/BloodPredictor";
+import { Analytics } from "@vercel/analytics/react";
 
 // Simple 404 page
 const NotFound = () => (
@@ -33,8 +34,7 @@ const NotFound = () => (
             <p className="text-xl mb-6 text-white/80">Page Not Found</p>
             <a
                 href="/"
-                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300"
-            >
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300">
                 Go Home
             </a>
         </div>
@@ -69,34 +69,49 @@ const Layout = ({ children }) => {
 
 const App = () => {
     return (
-        <Router>
-            <Layout>
-                <Routes>
-                    <Route path="/" element={<HeroSection />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/user-dashboard" element={<UserDashboard />} />
-                    <Route
-                        path="/hospital-dashboard"
-                        element={<HospitalDashboard />}
-                    />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/events" element={<Events />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/donate" element={<Donate />} />
-                    <Route path="/find-donor" element={<FindDonor />} />
-                    <Route path="/hospital/:id" element={<HospitalDetails />} />
-                    <Route path="/requests" element={<Requests />} />
-                    <Route path="/emergency" element={<EmergencyRequest />} />
-                    <Route
-                        path="/emergency/success"
-                        element={<EmergencySuccess />}
-                    />
-                    <Route path="*" element={<NotFound />} />
-                    <Route path="/blood-predictor" element={<BloodPredictor />} />
-                </Routes>
-            </Layout>
-        </Router>
+        <>
+            <Router>
+                <Layout>
+                    <Routes>
+                        <Route path="/" element={<HeroSection />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/signup" element={<Signup />} />
+                        <Route
+                            path="/user-dashboard"
+                            element={<UserDashboard />}
+                        />
+                        <Route
+                            path="/hospital-dashboard"
+                            element={<HospitalDashboard />}
+                        />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/events" element={<Events />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/donate" element={<Donate />} />
+                        <Route path="/find-donor" element={<FindDonor />} />
+                        <Route
+                            path="/hospital/:id"
+                            element={<HospitalDetails />}
+                        />
+                        <Route path="/requests" element={<Requests />} />
+                        <Route
+                            path="/emergency"
+                            element={<EmergencyRequest />}
+                        />
+                        <Route
+                            path="/emergency/success"
+                            element={<EmergencySuccess />}
+                        />
+                        <Route path="*" element={<NotFound />} />
+                        <Route
+                            path="/blood-predictor"
+                            element={<BloodPredictor />}
+                        />
+                    </Routes>
+                </Layout>
+            </Router>
+            <Analytics />
+        </>
     );
 };
 

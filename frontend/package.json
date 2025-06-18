@@ -12,6 +12,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
     "@tailwindcss/vite": "^4.0.9",
+    "@vercel/analytics": "^1.5.0",
     "axios": "^1.8.1",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
